@@ -7,8 +7,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 public class TCoach extends Thread {
-    private final int MIN_STRENGTH = 1;
-    private final int MAX_STRENGTH = 5;
     private final IContestantsBench_Coach contestantsBench;
     private final IRefereeSite_Coach refereeSite;
     private final int team;
