@@ -1,5 +1,5 @@
 package contestansbench;
 
-public interface IContestantsBench extends IContestansBench_Contestant, IContestansBench_Coach{
+public interface IContestantsBench extends IContestantsBench_Contestant, IContestantsBench_Coach {
 
 }

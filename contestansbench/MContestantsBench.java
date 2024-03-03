@@ -1,6 +1,6 @@
 package contestansbench;
 
-public class MContestansBench implements IContestantsBench{
+public class MContestantsBench implements IContestantsBench{
 
     public void callContestants() {
 

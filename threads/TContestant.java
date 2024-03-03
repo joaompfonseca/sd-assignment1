@@ -1,16 +1,22 @@
 package threads;
 
-import contestansbench.IContestansBench_Contestant;
+import contestansbench.IContestantsBench_Contestant;
 import playground.IPlayground_Contestant;
 
-public class TContestant implements Runnable {
+public class TContestant extends Thread {
+    private final int MIN_STRENGTH = 1;
+    private final int MAX_STRENGTH = 5;
 
-    private final IContestansBench_Contestant contestansBench;
+    private final IContestantsBench_Contestant contestantsBench;
     private final IPlayground_Contestant playground;
+    private final int team;
+    private final int strength;
 
-    public TContestant(IContestansBench_Contestant contestansBench, IPlayground_Contestant playground) {
-        this.contestansBench = contestansBench;
+    public TContestant(IContestantsBench_Contestant contestantsBench, IPlayground_Contestant playground, int team) {
+        this.contestantsBench = contestantsBench;
         this.playground = playground;
+        this.team = team;
+        this.strength = MAX_STRENGTH;
     }
 
     @Override

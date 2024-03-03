@@ -3,7 +3,7 @@ package threads;
 import playground.IPlayground_Referee;
 import refereesite.IRefereeSite_Referee;
 
-public class TReferee implements Runnable{
+public class TReferee extends Thread{
 
     private final IPlayground_Referee playground;
     private final IRefereeSite_Referee refereeSite;

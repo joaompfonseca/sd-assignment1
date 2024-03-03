@@ -6,49 +6,61 @@ import refereesite.MRefereeSite;
 import threads.TCoach;
 import threads.TContestant;
 import threads.TReferee;
-import contestansbench.MContestansBench;
+import contestansbench.MContestantsBench;
 
 // Game of the Rope using ReentrantLocks
 public class GameOfTheRope {
+
+    final static int N_MATCHES = 1;
+    final static int N_GAMES_PER_MATCH = 3;
+    final static int N_TRIALS_PER_GAME = 6;
+    final static int N_TEAMS = 2;
+    final static int N_CONTESTANTS_PER_TEAM = 5;
+    final static int N_CONTESTANTS_PER_TRIAL = 3;
+
+
     public static void main(String[] args) {
 
-        //Create the playground
+        // Information sharing regions
         IPlayground playground = new MPlayground();
-
-        //Create the Contestants Bench
-        IContestantsBench contestantsBench = new MContestansBench();
-
-        //Create the Referee Site
+        IContestantsBench contestantsBench = new MContestantsBench();
         IRefereeSite refereeSite = new MRefereeSite();
+        // TODO: Initialize the general information repository
 
-        //Create the Coach Thread
-        TCoach coach = new TCoach(playground,contestantsBench,refereeSite);
-        Thread tCoach = new Thread(coach);
+        // Referee
+        Thread tReferee = new TReferee(playground, refereeSite);
 
-        //Create the Referee Thread
-        TReferee referee = new TReferee(playground,refereeSite);
-        Thread tReferee = new Thread(referee);
-
-        //Create 10 Contestants Threads
-        TContestant[] contestants = new TContestant[10];
-        for (int i = 0; i < 10; i++) {
-            contestants[i] = new TContestant(contestantsBench,playground);
+        // Coaches
+        Thread[] tCoaches = new Thread[N_TEAMS];
+        for (int team = 0; team < N_TEAMS; team++) {
+            tCoaches[team] = new TCoach(contestantsBench, playground, refereeSite, team);
         }
 
-        //Start the threads
-        tCoach.start();
+        // Contestants
+        Thread[] tContestants = new Thread[N_TEAMS * N_CONTESTANTS_PER_TEAM];
+        for (int team = 0; team < N_TEAMS; team++) {
+            for (int i = 0; i < N_CONTESTANTS_PER_TEAM; i++) {
+                tContestants[team * N_CONTESTANTS_PER_TEAM + i] = new TContestant(contestantsBench, playground, team);
+            }
+        }
+
+        // Start the threads
         tReferee.start();
-        for (int i = 0; i < 10; i++) {
-            Thread tContestant = new Thread(contestants[i]);
-            tContestant.start();
+        for (Thread tCoach : tCoaches) {
+            tCoach.start();
+        }
+        for (Thread contestant : tContestants) {
+            contestant.start();
         }
 
+        // Wait for the threads to finish
         try {
-            tCoach.join();
             tReferee.join();
-            for (int i = 0; i < 10; i++) {
-                Thread tContestant = new Thread(contestants[i]);
-                tContestant.join();
+            for (Thread tCoach : tCoaches) {
+                tCoach.join();
+            }
+            for (Thread contestant : tContestants) {
+                contestant.join();
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
