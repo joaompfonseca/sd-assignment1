@@ -11,6 +11,6 @@ public interface IPlayground_Referee {
     /**
      * The referee determines the result of a trial.
      */
-    void assertTrialDecision();
+    int assertTrialDecision();
 
 }

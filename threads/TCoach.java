@@ -20,7 +20,7 @@ public class TCoach extends Thread {
 
     @Override
     public void run() {
-        this.log("started");
+        this.log("thread started");
     }
 
     private void log(String msg) {
