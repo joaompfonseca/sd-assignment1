@@ -15,7 +15,10 @@ public class TReferee extends Thread{
 
     @Override
     public void run() {
-        playground.startTrial();
-        System.out.println("Referee");
+        this.log("started");
+    }
+
+    private void log(String msg) {
+        System.out.printf("[Referee]: %s\n", msg);
     }
 }

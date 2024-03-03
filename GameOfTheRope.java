@@ -39,8 +39,8 @@ public class GameOfTheRope {
         // Contestants
         Thread[] tContestants = new Thread[N_TEAMS * N_CONTESTANTS_PER_TEAM];
         for (int team = 0; team < N_TEAMS; team++) {
-            for (int i = 0; i < N_CONTESTANTS_PER_TEAM; i++) {
-                tContestants[team * N_CONTESTANTS_PER_TEAM + i] = new TContestant(contestantsBench, playground, team);
+            for (int number = 0; number < N_CONTESTANTS_PER_TEAM; number++) {
+                tContestants[team * N_CONTESTANTS_PER_TEAM + number] = new TContestant(contestantsBench, playground, number, team);
             }
         }
 

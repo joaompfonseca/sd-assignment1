@@ -20,7 +20,10 @@ public class TCoach extends Thread {
 
     @Override
     public void run() {
-        playground.reviewNotes();
-        System.out.println("Coach");
+        this.log("started");
+    }
+
+    private void log(String msg) {
+        System.out.printf("[Coach#%d]: %s\n", team, msg);
     }
 }
