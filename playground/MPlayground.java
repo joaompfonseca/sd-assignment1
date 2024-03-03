@@ -15,7 +15,7 @@ public class MPlayground implements IPlayground{
         condition = lock.newCondition();
     }
 
-    public void reviewNotes() {
+    public int[] reviewNotes() {
         lock.lock();
         try {
             System.out.println("Inside reviewNotes() method.");
@@ -26,10 +26,7 @@ public class MPlayground implements IPlayground{
             System.out.println("Coach is reviewing the notes.");
             lock.unlock();
         }
-    }
-
-    public void followCoachAdvice() {
-
+        return new int[0];
     }
 
     public void getReady() {
@@ -58,7 +55,7 @@ public class MPlayground implements IPlayground{
         }
     }
 
-    public void assertTrialDecision() {
-
+    public int assertTrialDecision() {
+        return 0;
     }
 }

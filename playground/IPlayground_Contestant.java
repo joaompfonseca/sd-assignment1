@@ -1,12 +1,6 @@
 package playground;
 
 public interface IPlayground_Contestant {
-
-    /**
-     * The contestant joins the playground to play a trial.
-     */
-    void followCoachAdvice();
-
     /**
      * The contestant is ready to play the trial.
      */

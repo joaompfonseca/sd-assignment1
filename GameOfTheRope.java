@@ -10,7 +10,6 @@ import contestansbench.MContestantsBench;
 
 // Game of the Rope using ReentrantLocks
 public class GameOfTheRope {
-    final static int N_TEAMS = 2; // Makes code more readable
     final static int N_CONTESTANTS_PER_TEAM = 5;
     final static int N_CONTESTANTS_PER_TRIAL = 3;
 
@@ -27,14 +26,14 @@ public class GameOfTheRope {
         Thread tReferee = new TReferee(playground, refereeSite);
 
         // Coaches
-        Thread[] tCoaches = new Thread[N_TEAMS];
-        for (int team = 0; team < N_TEAMS; team++) {
-            tCoaches[team] = new TCoach(contestantsBench, playground, refereeSite, team);
+        Thread[] tCoaches = new Thread[2];
+        for (int team = 0; team < 2; team++) {
+            tCoaches[team] = new TCoach(contestantsBench, playground, refereeSite, team, N_CONTESTANTS_PER_TRIAL);
         }
 
         // Contestants
-        Thread[] tContestants = new Thread[N_TEAMS * N_CONTESTANTS_PER_TEAM];
-        for (int team = 0; team < N_TEAMS; team++) {
+        Thread[] tContestants = new Thread[2 * N_CONTESTANTS_PER_TEAM];
+        for (int team = 0; team < 2; team++) {
             for (int number = 0; number < N_CONTESTANTS_PER_TEAM; number++) {
                 tContestants[team * N_CONTESTANTS_PER_TEAM + number] = new TContestant(contestantsBench, playground, number, team);
             }

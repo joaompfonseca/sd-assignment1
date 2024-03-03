@@ -13,11 +13,11 @@ public class MRefereeSite implements IRefereeSite {
 
     }
 
-    public void declareGameWinner() {
+    public void declareGameWinner(int team) {
 
     }
 
-    public void declareMatchWinner() {
+    public void declareMatchWinner(int team) {
 
     }
 }

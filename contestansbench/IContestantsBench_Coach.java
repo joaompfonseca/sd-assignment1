@@ -5,5 +5,5 @@ public interface IContestantsBench_Coach {
     /**
      * The coach selects which contestants will play the next trial.
      */
-    void callContestants();
+    void callContestants(int[] contestants);
 }

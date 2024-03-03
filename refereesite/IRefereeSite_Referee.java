@@ -15,10 +15,10 @@ public interface IRefereeSite_Referee {
     /**
      * The referee declares the winner of a game. A game has many trials.
      */
-    void declareGameWinner(int winTeam);
+    void declareGameWinner(int team);
 
     /**
      * The referee declares the winner of a match. A match has many games.
      */
-    void declareMatchWinner(int winTeam);
+    void declareMatchWinner(int team);
 }

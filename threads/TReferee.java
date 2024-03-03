@@ -4,7 +4,6 @@ import playground.IPlayground_Referee;
 import refereesite.IRefereeSite_Referee;
 
 public class TReferee extends Thread {
-    private final int N_TEAMS = 2; // Makes code more readable
     private final int N_MATCHES = 1;
     private final int N_GAMES_PER_MATCH = 3;
     private final int N_TRIALS_PER_GAME = 6;
@@ -21,7 +20,7 @@ public class TReferee extends Thread {
         this.log("thread started");
         for (int match = 0; match < N_MATCHES; match++) {
             this.log("start of the match");
-            int[] gameWins = new int[N_TEAMS];
+            int[] gameWins = new int[2];
             for (int game = 0; game < N_GAMES_PER_MATCH; game++) {
                 this.refereeSite.announceNewGame();
                 this.log("start of a game");
@@ -62,6 +61,7 @@ public class TReferee extends Thread {
             this.refereeSite.declareMatchWinner(winTeamMatch);
             this.log("end of the match");
         }
+        this.log("thread finished");
     }
 
     private void log(String msg) {

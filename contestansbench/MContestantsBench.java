@@ -1,12 +1,16 @@
 package contestansbench;
 
-public class MContestantsBench implements IContestantsBench{
+public class MContestantsBench implements IContestantsBench {
 
-    public void callContestants() {
+    public void followCoachAdvice() {
 
     }
 
     public void seatDown() {
+
+    }
+
+    public void callContestants(int[] contestants) {
 
     }
 }
