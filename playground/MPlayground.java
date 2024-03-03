@@ -5,7 +5,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static java.lang.Thread.sleep;
 
-public class MPlayground implements IPlayground{
+public class MPlayground implements IPlayground {
 
     private final ReentrantLock lock;
     private final Condition condition;
@@ -15,32 +15,22 @@ public class MPlayground implements IPlayground{
         condition = lock.newCondition();
     }
 
-    public int[] reviewNotes() {
-        lock.lock();
-        try {
-            System.out.println("Inside reviewNotes() method.");
-            condition.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            System.out.println("Coach is reviewing the notes.");
-            lock.unlock();
-        }
-        return new int[0];
-    }
-
+    @Override
     public void getReady() {
 
     }
 
+    @Override
     public void pullTheRope() {
 
     }
 
+    @Override
     public void amDone() {
 
     }
 
+    @Override
     public void startTrial() {
         lock.lock();
         try {
@@ -55,6 +45,7 @@ public class MPlayground implements IPlayground{
         }
     }
 
+    @Override
     public int assertTrialDecision() {
         return 0;
     }
