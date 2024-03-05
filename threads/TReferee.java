@@ -30,7 +30,8 @@ public class TReferee extends Thread {
                     log("teams ready");
                     playground.startTrial();
                     log("wait for trial conclusion");
-                    ropePosition = playground.assertTrialDecision();
+                    int shift = playground.assertTrialDecision();
+                    ropePosition =+ shift;
                     if (Math.abs(ropePosition) >= 4) {
                         break; // Team won by knockout
                     }
