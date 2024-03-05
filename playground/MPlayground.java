@@ -9,18 +9,22 @@ public class MPlayground implements IPlayground {
 
     private final int contestantsPerTrial;
     private final ReentrantLock lock;
+    private final Condition trialReady;
+    private int contestantsReady;
     private final Condition trialStarted;
     private final Condition trialEnded;
-    private final Condition trialDecided;
     private int contestantsDone;
+    private final Condition trialDecided;
 
     public MPlayground(int contestantsPerTrial) {
         this.contestantsPerTrial = contestantsPerTrial;
         lock = new ReentrantLock();
+        trialReady = lock.newCondition();
+        contestantsReady = 0;
         trialStarted = lock.newCondition();
         trialEnded = lock.newCondition();
-        trialDecided = lock.newCondition();
         contestantsDone = 0;
+        trialDecided = lock.newCondition();
     }
 
     @Override
@@ -28,6 +32,10 @@ public class MPlayground implements IPlayground {
         log("get ready");
         lock.lock();
         try {
+            contestantsReady++;
+            if (contestantsReady == contestantsPerTrial) {
+                trialReady.signal();
+            }
             trialStarted.await(); // releases lock and waits
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -48,7 +56,6 @@ public class MPlayground implements IPlayground {
         contestantsDone++;
         if (contestantsDone == 2 * contestantsPerTrial) {
             trialEnded.signal();
-            contestantsDone = 0;
         }
         lock.unlock();
     }
@@ -57,8 +64,16 @@ public class MPlayground implements IPlayground {
     public void startTrial() {
         log("start trial");
         lock.lock();
-        trialStarted.signalAll();
-        lock.unlock();
+        try {
+            if (contestantsReady < contestantsPerTrial)
+                trialReady.await(); // releases lock and waits
+            contestantsDone = 0;
+            trialStarted.signalAll();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
@@ -66,9 +81,11 @@ public class MPlayground implements IPlayground {
         log("assert trial decision");
         lock.lock();
         try {
-            trialEnded.await(); // releases lock and waits
+            if (contestantsDone < 2 * contestantsPerTrial)
+                trialEnded.await(); // releases lock and waits
             // TODO: set notes
             trialDecided.signalAll();
+            contestantsReady = 0;
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -82,7 +99,8 @@ public class MPlayground implements IPlayground {
         log("review notes: team %d".formatted(team));
         lock.lock();
         try {
-            trialDecided.await(); // releases lock and waits
+            if (contestantsDone < 2 * contestantsPerTrial)
+                trialDecided.await(); // releases lock and waits
             // TODO: get notes
         } catch (InterruptedException e) {
             e.printStackTrace();
