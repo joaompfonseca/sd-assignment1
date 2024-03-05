@@ -15,6 +15,8 @@ public class MPlayground implements IPlayground {
     private final Condition trialEnded;
     private int contestantsDone;
     private final Condition trialDecided;
+    private boolean isTrialDecided;
+    private int coachReviews;
 
     public MPlayground(int contestantsPerTrial) {
         this.contestantsPerTrial = contestantsPerTrial;
@@ -25,6 +27,8 @@ public class MPlayground implements IPlayground {
         trialEnded = lock.newCondition();
         contestantsDone = 0;
         trialDecided = lock.newCondition();
+        isTrialDecided = false;
+        coachReviews = 0;
     }
 
     @Override
@@ -67,7 +71,7 @@ public class MPlayground implements IPlayground {
         try {
             if (contestantsReady < contestantsPerTrial)
                 trialReady.await(); // releases lock and waits
-            contestantsDone = 0;
+            contestantsReady = 0;
             trialStarted.signalAll();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -83,9 +87,11 @@ public class MPlayground implements IPlayground {
         try {
             if (contestantsDone < 2 * contestantsPerTrial)
                 trialEnded.await(); // releases lock and waits
+            contestantsDone = 0;
             // TODO: set notes
+            isTrialDecided = true;
+            coachReviews = 0;
             trialDecided.signalAll();
-            contestantsReady = 0;
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -99,8 +105,12 @@ public class MPlayground implements IPlayground {
         log("review notes: team %d".formatted(team));
         lock.lock();
         try {
-            if (contestantsDone < 2 * contestantsPerTrial)
+            if (!isTrialDecided)
                 trialDecided.await(); // releases lock and waits
+            coachReviews++;
+            if (coachReviews == 2) {
+                isTrialDecided = false;
+            }
             // TODO: get notes
         } catch (InterruptedException e) {
             e.printStackTrace();

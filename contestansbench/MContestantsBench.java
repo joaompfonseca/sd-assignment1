@@ -82,6 +82,38 @@ public class MContestantsBench implements IContestantsBench {
     }
 
     @Override
+    public void callContestants(int team, boolean[] selectedContestants) {
+        log("call contestants: team %d, selectedContestants %s".formatted(team, Arrays.toString(selectedContestants)));
+        if (team == 0) {
+            team0_lock.lock();
+            try {
+                if (team0_countSeatedDown < contestantsPerTeam)
+                    team0_seatedDown.await(); // releases the lock and waits
+                team0_selectedContestants = selectedContestants;
+                team0_teamAssembled.signalAll();
+                team0_teamInPosition.await(); // releases the lock and waits
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                team0_lock.unlock();
+            }
+        } else if (team == 1) {
+            team1_lock.lock();
+            try {
+                if (team1_countSeatedDown < contestantsPerTeam)
+                    team1_seatedDown.await(); // releases the lock and waits
+                team1_selectedContestants = selectedContestants;
+                team1_teamAssembled.signalAll();
+                team1_teamInPosition.await(); // releases the lock and waits
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } finally {
+                team1_lock.unlock();
+            }
+        }
+    }
+
+    @Override
     public void followCoachAdvice(int team) {
         log("follow coach advice: team %d".formatted(team));
         if (team == 0) {
@@ -100,40 +132,6 @@ public class MContestantsBench implements IContestantsBench {
                 team1_teamInPosition.signal();
             }
             team1_lock.unlock();
-        }
-    }
-
-    @Override
-    public void callContestants(int team, boolean[] selectedContestants) {
-        log("call contestants: team %d, selectedContestants %s".formatted(team, Arrays.toString(selectedContestants)));
-        if (team == 0) {
-            team0_lock.lock();
-            try {
-                if (team0_countSeatedDown < contestantsPerTeam)
-                    team0_seatedDown.await(); // releases the lock and waits
-                team0_selectedContestants = selectedContestants;
-                team0_teamAssembled.signalAll();
-                if (team0_countInPosition < contestantsPerTrial)
-                    team0_teamInPosition.await(); // releases the lock and waits
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } finally {
-                team0_lock.unlock();
-            }
-        } else if (team == 1) {
-            team1_lock.lock();
-            try {
-                if (team1_countSeatedDown < contestantsPerTeam)
-                    team1_seatedDown.await(); // releases the lock and waits
-                team1_selectedContestants = selectedContestants;
-                team1_teamAssembled.signalAll();
-                if (team1_countInPosition < contestantsPerTrial)
-                    team1_teamInPosition.await(); // releases the lock and waits
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } finally {
-                team1_lock.unlock();
-            }
         }
     }
 

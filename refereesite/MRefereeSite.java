@@ -45,10 +45,10 @@ public class MRefereeSite implements IRefereeSite {
         log("call trial");
         lock.lock();
         try {
-            countInformReferee = 0;
             trialCalled.signalAll();
             if (countInformReferee < 2)
                 refereeInformed.await(); // releases lock and waits
+            countInformReferee = 0;
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
