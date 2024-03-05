@@ -17,20 +17,20 @@ public class TReferee extends Thread {
 
     @Override
     public void run() {
-        this.log("thread started");
+        log("thread started");
         for (int match = 0; match < N_MATCHES; match++) {
-            this.log("start of the match");
+            log("start of the match");
             int[] gameWins = new int[2];
             for (int game = 0; game < N_GAMES_PER_MATCH; game++) {
-                this.refereeSite.announceNewGame();
-                this.log("start of a game");
+                refereeSite.announceNewGame();
+                log("start of a game");
                 int ropePosition = 0;
                 for (int trial = 0; trial < N_TRIALS_PER_GAME; trial++) {
-                    this.refereeSite.callTrial();
-                    this.log("teams ready");
-                    this.playground.startTrial();
-                    this.log("wait for trial conclusion");
-                    ropePosition = this.playground.assertTrialDecision();
+                    refereeSite.callTrial();
+                    log("teams ready");
+                    playground.startTrial();
+                    log("wait for trial conclusion");
+                    ropePosition = playground.assertTrialDecision();
                     if (Math.abs(ropePosition) >= 4) {
                         break; // Team won by knockout
                     }
@@ -45,8 +45,8 @@ public class TReferee extends Thread {
                 } else {
                     winTeamGame = -1; // Draw
                 }
-                this.refereeSite.declareGameWinner(winTeamGame);
-                this.log("end of a game");
+                refereeSite.declareGameWinner(winTeamGame);
+                log("end of a game");
             }
             int winTeamMatch;
             if (gameWins[0] > gameWins[1]) {
@@ -58,10 +58,10 @@ public class TReferee extends Thread {
             else {
                 winTeamMatch = -1; // Draw
             }
-            this.refereeSite.declareMatchWinner(winTeamMatch);
-            this.log("end of the match");
+            refereeSite.declareMatchWinner(winTeamMatch);
+            log("end of the match");
         }
-        this.log("thread finished");
+        log("thread finished");
     }
 
     private void log(String msg) {

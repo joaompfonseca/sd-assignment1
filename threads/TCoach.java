@@ -1,6 +1,7 @@
 package threads;
 
 import contestansbench.IContestantsBench_Coach;
+import playground.IPlayground_Coach;
 import refereesite.IRefereeSite_Coach;
 
 import java.util.Arrays;
@@ -8,42 +9,60 @@ import java.util.Comparator;
 
 public class TCoach extends Thread {
     private final IContestantsBench_Coach contestantsBench;
+    private final IPlayground_Coach playground;
     private final IRefereeSite_Coach refereeSite;
     private final int team;
+    private final int contestantsPerTeam;
     private final int contestantsPerTrial;
 
-    public TCoach(IContestantsBench_Coach contestantsBench, IRefereeSite_Coach refereeSite, int team, int contestantsPerTrial) {
+    public TCoach(IContestantsBench_Coach contestantsBench, IPlayground_Coach playground, IRefereeSite_Coach refereeSite, int team, int contestantsPerTeam, int contestantsPerTrial) {
         this.contestantsBench = contestantsBench;
+        this.playground = playground;
         this.refereeSite = refereeSite;
         this.team = team;
+        this.contestantsPerTeam = contestantsPerTeam;
         this.contestantsPerTrial = contestantsPerTrial;
+    }
+
+    private boolean[] selectContestants(int[] strengths) {
+        // Tactic: choose contestants with the highest strength
+        // TODO: maybe allow for different tactics
+        Integer[] indexes = new Integer[strengths.length];
+        for (int i = 0; i < indexes.length; i++) {
+            indexes[i] = i;
+        }
+        Arrays.sort(indexes, Comparator.comparingInt(i -> strengths[i]));
+        boolean[] selectedContestants = new boolean[contestantsPerTeam];
+        for (int i = 0; i < contestantsPerTrial; i++) {
+            selectedContestants[indexes[i]] = true;
+        }
+        for (int i = contestantsPerTrial; i < contestantsPerTeam; i++) {
+            selectedContestants[indexes[i]] = false;
+        }
+        return selectedContestants;
     }
 
     @Override
     public void run() {
-        this.log("thread started");
+        log("thread started");
         int[] strengths;
-        int[] selectedContestants = new int[contestantsPerTrial];
+        boolean[] selectedContestants = new boolean[contestantsPerTeam];
         for (int i = 0; i < contestantsPerTrial; i++) {
-            selectedContestants[i] = i;
+            selectedContestants[i] = true;
+        }
+        for (int i = contestantsPerTrial; i < contestantsPerTeam; i++) {
+            selectedContestants[i] = false;
         }
         while (true) { // TODO: implement stopping condition
-            this.log("wait for referee command");
-            this.contestantsBench.callContestants(selectedContestants);
-            this.log("assemble team");
-            this.refereeSite.informReferee();
-            this.log("watch trial");
-            strengths = this.contestantsBench.reviewNotes();
-            // Tactic: choose contestants with the highest strength
-            // TODO: maybe allow for different tactics
-            selectedContestants = Arrays.stream(strengths)
-                    .boxed()
-                    .sorted(Comparator.reverseOrder())
-                    .limit(contestantsPerTrial)
-                    .mapToInt(Integer::intValue)
-                    .toArray();
+            log("wait for referee command");
+            contestantsBench.callContestants(team, selectedContestants);
+            log("assemble team");
+            refereeSite.informReferee();
+            log("watch trial");
+            strengths = playground.reviewNotes(team);
+            selectedContestants = selectContestants(strengths);
         }
-        // this.log("thread finished");
+        // log("thread finished");
     }
 
     private void log(String msg) {

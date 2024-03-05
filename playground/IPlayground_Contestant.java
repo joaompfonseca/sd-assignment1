@@ -1,6 +1,7 @@
 package playground;
 
 public interface IPlayground_Contestant {
+
     /**
      * The contestant is ready to play the trial.
      */

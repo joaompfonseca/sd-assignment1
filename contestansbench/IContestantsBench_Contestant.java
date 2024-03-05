@@ -3,12 +3,11 @@ package contestansbench;
 public interface IContestantsBench_Contestant {
 
     /**
-     * The contestant joins the playground to play a trial.
+     * The contestant seats down on the bench after the trial.
      */
-    void followCoachAdvice();
-
+    void seatDown(int team, int contestantNumber);
     /**
-     * The contestant sits down and waits for the next trial.
+     * The contestant is selected by the coach to play the next trial.
      */
-    void seatDown();
+    void followCoachAdvice(int team);
 }

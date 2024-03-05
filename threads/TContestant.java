@@ -18,18 +18,18 @@ public class TContestant extends Thread {
 
     @Override
     public void run() {
-        this.log("thread started");
+        log("thread started");
         while (true) { // TODO: implement stopping condition
-            this.contestantsBench.seatDown();
-            this.log("seat at the bench");
-            this.contestantsBench.followCoachAdvice();
-            this.log("stand in position");
-            this.playground.getReady();
-            this.log("do your best");
-            this.playground.pullTheRope();
-            this.playground.amDone();
+            contestantsBench.seatDown(team, number);
+            log("seat at the bench");
+            contestantsBench.followCoachAdvice(team);
+            log("stand in position");
+            playground.getReady();
+            log("do your best");
+            playground.pullTheRope();
+            playground.amDone();
         }
-        // this.log("thread finished");
+        // log("thread finished");
     }
 
     private void log(String msg) {

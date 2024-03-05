@@ -1,4 +1,4 @@
 package playground;
 
-public interface IPlayground extends IPlayground_Referee, IPlayground_Contestant {
+public interface IPlayground extends IPlayground_Coach, IPlayground_Contestant, IPlayground_Referee {
 }

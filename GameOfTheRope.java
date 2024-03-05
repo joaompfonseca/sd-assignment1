@@ -17,8 +17,8 @@ public class GameOfTheRope {
     public static void main(String[] args) {
 
         // Information sharing regions
-        IPlayground playground = new MPlayground();
-        IContestantsBench contestantsBench = new MContestantsBench();
+        IPlayground playground = new MPlayground(N_CONTESTANTS_PER_TRIAL);
+        IContestantsBench contestantsBench = new MContestantsBench(N_CONTESTANTS_PER_TEAM, N_CONTESTANTS_PER_TRIAL);
         IRefereeSite refereeSite = new MRefereeSite();
         // TODO: Initialize the general information repository
 
@@ -28,7 +28,7 @@ public class GameOfTheRope {
         // Coaches
         Thread[] tCoaches = new Thread[2];
         for (int team = 0; team < 2; team++) {
-            tCoaches[team] = new TCoach(contestantsBench, refereeSite, team, N_CONTESTANTS_PER_TRIAL);
+            tCoaches[team] = new TCoach(contestantsBench, playground, refereeSite, team, N_CONTESTANTS_PER_TEAM, N_CONTESTANTS_PER_TRIAL);
         }
 
         // Contestants
