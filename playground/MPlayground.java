@@ -101,7 +101,7 @@ public class MPlayground implements IPlayground {
     }
 
     @Override
-    public int[] reviewNotes(int team) {
+    public int reviewNotes(int team) {
         log("review notes: team %d".formatted(team));
         lock.lock();
         try {
@@ -117,7 +117,7 @@ public class MPlayground implements IPlayground {
         } finally {
             lock.unlock();
         }
-        return new int[]{5, 5, 5, 5, 5};
+        return 0;
     }
 
     private void log(String msg) {

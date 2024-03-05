@@ -45,7 +45,10 @@ public class TCoach extends Thread {
     @Override
     public void run() {
         log("thread started");
-        int[] strengths;
+        int[] strengths = new int[contestantsPerTeam];
+        for (int i = 0; i < contestantsPerTeam; i++) {
+            strengths[i] = 5;
+        }
         boolean[] selectedContestants = new boolean[contestantsPerTeam];
         for (int i = 0; i < contestantsPerTrial; i++) {
             selectedContestants[i] = true;
@@ -59,7 +62,7 @@ public class TCoach extends Thread {
             log("assemble team");
             refereeSite.informReferee();
             log("watch trial");
-            strengths = playground.reviewNotes(team);
+            int information = playground.reviewNotes(team); // TODO: what information should be returned?
             selectedContestants = selectContestants(strengths);
         }
         // log("thread finished");
