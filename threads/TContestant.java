@@ -28,6 +28,7 @@ public class TContestant extends Thread {
             log("do your best");
             playground.pullTheRope();
             playground.amDone();
+
         }
         // log("thread finished");
     }

@@ -1,5 +1,7 @@
 package contestansbench;
 
+import threads.TContestant;
+
 import java.util.Arrays;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -22,7 +24,8 @@ public class MContestantsBench implements IContestantsBench {
     private final Condition team1_teamInPosition;
     private int team0_countInPosition;
     private int team1_countInPosition;
-
+    private int[] team0_strengths;
+    private int[] team1_strengths;
 
     public MContestantsBench(int contestantsPerTeam, int contestantsPerTrial) {
         this.contestantsPerTeam = contestantsPerTeam;
@@ -41,6 +44,14 @@ public class MContestantsBench implements IContestantsBench {
         team1_teamInPosition = team1_lock.newCondition();
         team0_countInPosition = 0;
         team1_countInPosition = 0;
+
+        // Initialize strengths
+        team0_strengths = new int[contestantsPerTeam];
+        team1_strengths = new int[contestantsPerTeam];
+        for (int i = 0; i < contestantsPerTeam; i++) {
+            team0_strengths[i] = 5;
+            team1_strengths[i] = 5;
+        }
     }
 
     @Override
@@ -50,7 +61,19 @@ public class MContestantsBench implements IContestantsBench {
             team0_lock.lock();
             try {
                 team0_countSeatedDown++;
+
                 if (team0_countSeatedDown == contestantsPerTeam) {
+
+                    // If contesntant in selectedContestans -1 in strength else +1
+                    for (int i = 0; i < contestantsPerTeam; i++) {
+                        System.out.println(team0_selectedContestants.length);
+                        if (team0_selectedContestants[i]) {
+                            team0_strengths[i]--;
+                        } else {
+                            team0_strengths[i]++;
+                        }
+                    }
+
                     team0_countInPosition = 0;
                     team0_seatedDown.signal();
                 }
@@ -67,6 +90,16 @@ public class MContestantsBench implements IContestantsBench {
             try {
                 team1_countSeatedDown++;
                 if (team1_countSeatedDown == contestantsPerTeam) {
+
+                    // If contesntant in selectedContestans -1 in strength else +1
+                    for (int i = 0; i < contestantsPerTeam; i++) {
+                        if (team0_selectedContestants[i]) {
+                            team0_strengths[i]--;
+                        } else {
+                            team0_strengths[i]++;
+                        }
+                    }
+
                     team1_countInPosition = 0;
                     team1_seatedDown.signal();
                 }
@@ -78,6 +111,17 @@ public class MContestantsBench implements IContestantsBench {
             } finally {
                 team1_lock.unlock();
             }
+        }
+    }
+
+    @Override
+    public int[] getContestantsStrength(int team) {
+        log("get contestants strength: team %d".formatted(team));
+
+        if (team == 0) {
+            return team0_strengths;
+        } else {
+            return team1_strengths;
         }
     }
 

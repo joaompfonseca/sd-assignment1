@@ -45,25 +45,15 @@ public class TCoach extends Thread {
     @Override
     public void run() {
         log("thread started");
-        int[] strengths = new int[contestantsPerTeam];
-        for (int i = 0; i < contestantsPerTeam; i++) {
-            strengths[i] = 5;
-        }
-        boolean[] selectedContestants = new boolean[contestantsPerTeam];
-        for (int i = 0; i < contestantsPerTrial; i++) {
-            selectedContestants[i] = true;
-        }
-        for (int i = contestantsPerTrial; i < contestantsPerTeam; i++) {
-            selectedContestants[i] = false;
-        }
         while (true) { // TODO: implement stopping condition
             log("wait for referee command");
+            int[] strengths = contestantsBench.getContestantsStrength(team);
+            boolean[] selectedContestants = selectContestants(strengths);
             contestantsBench.callContestants(team, selectedContestants);
             log("assemble team");
             refereeSite.informReferee();
             log("watch trial");
             int information = playground.reviewNotes(team); // TODO: what information should be returned?
-            selectedContestants = selectContestants(strengths);
         }
         // log("thread finished");
     }
