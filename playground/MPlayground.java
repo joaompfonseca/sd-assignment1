@@ -22,7 +22,7 @@ public class MPlayground implements IPlayground {
     private final Condition refereeInformed;
     private int countInformed;
     private final Condition trialStarted;
-    private int ropeShift;
+    private int ropePosition;
     private final Condition trialEnded;
     private int contestantsDone;
     private final Condition trialDecided;
@@ -41,8 +41,14 @@ public class MPlayground implements IPlayground {
     }
 
     @Override
+    public void setRopePosition(int ropePosition) {
+        log("set rope position: %d".formatted(ropePosition));
+        this.ropePosition = ropePosition;
+    }
+
+    @Override
     public void getReady(int team) {
-        log("get ready");
+        log("get ready: team %d".formatted(team));
         TeamData teamData = this.teamData[team];
         teamData.lock.lock();
         teamData.contestantsReady++;
@@ -62,7 +68,7 @@ public class MPlayground implements IPlayground {
 
     @Override
     public void informReferee(int team) {
-        log("inform referee");
+        log("inform referee: team %d".formatted(team));
         TeamData teamData = this.teamData[team];
         teamData.lock.lock();
         try {
@@ -106,9 +112,9 @@ public class MPlayground implements IPlayground {
 
     @Override
     public int pullTheRope(int team, int strength) {
-        log("pull the rope");
+        log("pull the rope: team %d, strength %d".formatted(team, strength));
         lock.lock();
-        ropeShift = (team == 0) ? -strength : strength;
+        ropePosition += (team == 0) ? -strength : strength;
         lock.unlock();
         return strength - 1;
     }
@@ -148,7 +154,7 @@ public class MPlayground implements IPlayground {
         } finally {
             lock.unlock();
         }
-        return ropeShift;
+        return ropePosition;
     }
 
     private void log(String msg) {

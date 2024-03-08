@@ -23,13 +23,13 @@ public class TReferee extends Thread {
             log("start of a game");
             refereeSite.announceNewGame();
             int ropePosition = 0;
+            playground.setRopePosition(ropePosition);
             for (int trial = 0; trial < N_TRIALS_PER_GAME; trial++) {
                 log("teams ready");
                 refereeSite.callTrial();
                 log("wait for trial conclusion");
                 playground.startTrial();
-                int shift = playground.assertTrialDecision();
-                ropePosition += shift;
+                ropePosition = playground.assertTrialDecision();
                 if (Math.abs(ropePosition) >= 4) {
                     break; // Team won by knockout
                 }
