@@ -6,14 +6,16 @@ import playground.IPlayground_Contestant;
 public class TContestant extends Thread {
     private final IContestantsBench_Contestant contestantsBench;
     private final IPlayground_Contestant playground;
-    private final int number;
     private final int team;
+    private final int contestant;
+    private int strength;
 
-    public TContestant(IContestantsBench_Contestant contestantsBench, IPlayground_Contestant playground, int number, int team) {
+    public TContestant(IContestantsBench_Contestant contestantsBench, IPlayground_Contestant playground, int team, int contestant, int strength) {
         this.contestantsBench = contestantsBench;
         this.playground = playground;
-        this.number = number;
         this.team = team;
+        this.contestant = contestant;
+        this.strength = strength;
     }
 
     @Override
@@ -21,7 +23,7 @@ public class TContestant extends Thread {
         log("thread started");
         while (true) {
             log("seat at the bench");
-            contestantsBench.seatDown(team, number);
+            strength = contestantsBench.seatDown(team, contestant, strength);
             boolean keepRunning = contestantsBench.followCoachAdvice(team);
             if (!keepRunning) {
                 break;
@@ -29,13 +31,13 @@ public class TContestant extends Thread {
             log("stand in position");
             playground.getReady(team);
             log("do your best");
-            playground.pullTheRope();
+            strength = playground.pullTheRope(team, strength);
             playground.amDone();
         }
         log("thread finished");
     }
 
     private void log(String msg) {
-        System.out.printf("[Team#%d-Cont#%d]: %s\n", team, number, msg);
+        System.out.printf("[Team#%d-Cont#%d]: %s\n", team, contestant, msg);
     }
 }

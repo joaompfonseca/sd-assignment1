@@ -12,13 +12,14 @@ import contestansbench.MContestantsBench;
 public class GameOfTheRope {
     final static int N_CONTESTANTS_PER_TEAM = 5;
     final static int N_CONTESTANTS_PER_TRIAL = 3;
+    final static int MAX_STRENGTH = 5;
 
 
     public static void main(String[] args) {
 
         // Information sharing regions
         IPlayground playground = new MPlayground(N_CONTESTANTS_PER_TRIAL);
-        IContestantsBench contestantsBench = new MContestantsBench(N_CONTESTANTS_PER_TEAM);
+        IContestantsBench contestantsBench = new MContestantsBench(N_CONTESTANTS_PER_TEAM, MAX_STRENGTH);
         IRefereeSite refereeSite = new MRefereeSite();
         // TODO: Initialize the general information repository
 
@@ -35,7 +36,7 @@ public class GameOfTheRope {
         Thread[] tContestants = new Thread[2 * N_CONTESTANTS_PER_TEAM];
         for (int team = 0; team < 2; team++) {
             for (int number = 0; number < N_CONTESTANTS_PER_TEAM; number++) {
-                tContestants[team * N_CONTESTANTS_PER_TEAM + number] = new TContestant(contestantsBench, playground, number, team);
+                tContestants[team * N_CONTESTANTS_PER_TEAM + number] = new TContestant(contestantsBench, playground, team, number, MAX_STRENGTH);
             }
         }
 

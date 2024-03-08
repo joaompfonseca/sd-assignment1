@@ -12,6 +12,7 @@ public class MContestantsBench implements IContestantsBench {
         private final Condition teamAssembled;
         private int countSeatedDown;
         private boolean[] selected;
+        private int[] strengths;
         private boolean isMatchEnd;
 
         public TeamData() {
@@ -20,16 +21,19 @@ public class MContestantsBench implements IContestantsBench {
             teamAssembled = lock.newCondition();
             countSeatedDown = 0;
             selected = new boolean[contestantsPerTeam];
+            strengths = new int[contestantsPerTeam];
             isMatchEnd = false;
         }
     }
 
     private final int contestantsPerTeam;
+    private final int maxStrength;
     private final TeamData[] teamData = new TeamData[2];
 
 
-    public MContestantsBench(int contestantsPerTeam) {
+    public MContestantsBench(int contestantsPerTeam, int maxStrength) {
         this.contestantsPerTeam = contestantsPerTeam;
+        this.maxStrength = maxStrength;
         teamData[0] = new TeamData();
         teamData[1] = new TeamData();
     }
@@ -37,7 +41,8 @@ public class MContestantsBench implements IContestantsBench {
     @Override
     public int[] getTeamStrengths(int team) {
         log("get strengths: team %d".formatted(team));
-        return new int[]{5, 5, 5, 5, 5}; // TODO: implement
+        TeamData teamData = this.teamData[team];
+        return teamData.strengths;
     }
 
     @Override
@@ -50,24 +55,29 @@ public class MContestantsBench implements IContestantsBench {
     }
 
     @Override
-    public void seatDown(int team, int contestant) {
-        log("seat down: team %d, contestant %d".formatted(team, contestant));
+    public int seatDown(int team, int contestant, int strength) {
+        log("seat down: team %d, contestant %d, strength %d".formatted(team, contestant, strength));
         TeamData teamData = this.teamData[team];
         teamData.lock.lock();
         try {
-            teamData.selected[contestant] = false;
             teamData.countSeatedDown++;
+            teamData.selected[contestant] = false;
+            teamData.strengths[contestant] = strength;
             if (teamData.countSeatedDown == contestantsPerTeam) {
                 teamData.seatedDown.signal();
             }
             while (!teamData.selected[contestant]) {
                 teamData.teamAssembled.await(); // releases the lock and waits
+                if (!teamData.selected[contestant] && teamData.strengths[contestant] < maxStrength) {
+                   teamData.strengths[contestant]++; // stays seated, so strength increases
+                }
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
             teamData.lock.unlock();
         }
+        return teamData.strengths[contestant];
     }
 
     @Override

@@ -27,20 +27,17 @@ public class TCoach extends Thread {
     private boolean[] selectContestants(int[] strengths) {
         // Tactic: choose contestants with the highest strength
         // TODO: maybe allow for different tactics
-        // Integer[] indexes = new Integer[strengths.length];
-        // for (int i = 0; i < indexes.length; i++) {
-        //     indexes[i] = i;
-        // }
-        // Arrays.sort(indexes, Comparator.comparingInt(i -> strengths[i]));
-        // boolean[] selectedContestants = new boolean[contestantsPerTeam];
-        // for (int i = 0; i < contestantsPerTrial; i++) {
-        //     selectedContestants[indexes[i]] = true;
-        // }
-        // for (int i = contestantsPerTrial; i < contestantsPerTeam; i++) {
-        //     selectedContestants[indexes[i]] = false;
-        // }
-        // return selectedContestants;
-        return new boolean[]{true, true, true, false, false}; // TODO: remove this line
+        boolean[] selected = new boolean[contestantsPerTeam];
+        int[][] strengthsIndexed = new int[contestantsPerTeam][2];
+        for (int i = 0; i < contestantsPerTeam; i++) {
+            strengthsIndexed[i][0] = strengths[i];
+            strengthsIndexed[i][1] = i;
+        }
+        Arrays.sort(strengthsIndexed, Comparator.comparingInt(a -> -a[0]));
+        for (int i = 0; i < contestantsPerTrial; i++) {
+            selected[strengthsIndexed[i][1]] = true;
+        }
+        return selected;
     }
 
     private boolean[] selectAllContestants() {

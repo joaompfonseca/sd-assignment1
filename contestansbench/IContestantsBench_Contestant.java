@@ -1,7 +1,7 @@
 package contestansbench;
 
 public interface IContestantsBench_Contestant {
-    void seatDown(int team, int contestantNumber);
+    int seatDown(int team, int contestant, int strength);
 
     boolean followCoachAdvice(int team);
 }

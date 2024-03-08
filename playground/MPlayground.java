@@ -22,6 +22,7 @@ public class MPlayground implements IPlayground {
     private final Condition refereeInformed;
     private int countInformed;
     private final Condition trialStarted;
+    private int ropeShift;
     private final Condition trialEnded;
     private int contestantsDone;
     private final Condition trialDecided;
@@ -104,8 +105,12 @@ public class MPlayground implements IPlayground {
     }
 
     @Override
-    public void pullTheRope() {
+    public int pullTheRope(int team, int strength) {
         log("pull the rope");
+        lock.lock();
+        ropeShift = (team == 0) ? -strength : strength;
+        lock.unlock();
+        return strength - 1;
     }
 
     @Override
@@ -143,7 +148,7 @@ public class MPlayground implements IPlayground {
         } finally {
             lock.unlock();
         }
-        return 0;
+        return ropeShift;
     }
 
     private void log(String msg) {

@@ -3,7 +3,7 @@ package playground;
 public interface IPlayground_Contestant {
     void getReady(int team);
 
-    void pullTheRope();
+    int pullTheRope(int team, int strength);
 
     void amDone();
 }
