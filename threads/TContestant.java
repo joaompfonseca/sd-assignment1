@@ -19,17 +19,20 @@ public class TContestant extends Thread {
     @Override
     public void run() {
         log("thread started");
-        while (true) { // TODO: implement stopping condition
-            contestantsBench.seatDown(team, number);
+        while (true) {
             log("seat at the bench");
-            contestantsBench.followCoachAdvice(team);
+            contestantsBench.seatDown(team, number);
+            boolean keepRunning = contestantsBench.followCoachAdvice(team);
+            if (!keepRunning) {
+                break;
+            }
             log("stand in position");
-            playground.getReady();
+            playground.getReady(team);
             log("do your best");
             playground.pullTheRope();
             playground.amDone();
         }
-        // log("thread finished");
+        log("thread finished");
     }
 
     private void log(String msg) {

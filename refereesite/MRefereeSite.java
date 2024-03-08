@@ -6,33 +6,40 @@ import java.util.concurrent.locks.ReentrantLock;
 public class MRefereeSite implements IRefereeSite {
 
     private final ReentrantLock lock;
-    private final Condition trialCalled;
-    private final Condition refereeInformed;
-    private int countInformReferee;
+    private final Condition coachesWaited;
+    private int waiting;
+    private final Condition refereeCommand;
+    private boolean isMatchEnd;
     private int winTeamGame;
     private int winTeamMatch;
 
     public MRefereeSite() {
         lock = new ReentrantLock();
-        trialCalled = lock.newCondition();
-        refereeInformed = lock.newCondition();
-        countInformReferee = 0;
+        coachesWaited = lock.newCondition();
+        waiting = 0;
+        refereeCommand = lock.newCondition();
+        isMatchEnd = false;
         winTeamGame = -1;
         winTeamMatch = -1;
     }
 
+
     @Override
-    public void informReferee() {
-        log("inform referee");
+    public boolean reviewNotes() {
+        log("review notes");
         lock.lock();
         try {
-            countInformReferee++;
-            if (countInformReferee == 2) {
-                refereeInformed.signal();
+            waiting++;
+            if (waiting == 2) {
+                coachesWaited.signal(); // alerts referee
             }
+            refereeCommand.await(); // releases lock and waits for referee command
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
             lock.unlock();
         }
+        return !isMatchEnd;
     }
 
     @Override
@@ -45,10 +52,12 @@ public class MRefereeSite implements IRefereeSite {
         log("call trial");
         lock.lock();
         try {
-            trialCalled.signalAll();
-            if (countInformReferee < 2)
-                refereeInformed.await(); // releases lock and waits
-            countInformReferee = 0;
+            while (waiting < 2) {
+                coachesWaited.await(); // releases lock and waits for coaches
+            }
+            waiting = 0;
+            isMatchEnd = false;
+            refereeCommand.signalAll(); // alerts coaches
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -73,6 +82,15 @@ public class MRefereeSite implements IRefereeSite {
         lock.lock();
         try {
             winTeamMatch = team;
+            while (waiting < 2) {
+                coachesWaited.await(); // releases lock and waits for coaches
+            }
+            waiting = 0;
+            isMatchEnd = true;
+            refereeCommand.signalAll(); // alerts coaches
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
             lock.unlock();
         }

@@ -1,9 +1,10 @@
 package contestansbench;
 
 public interface IContestantsBench_Coach {
-
-    /**
-     * The coach selects which contestants will play the next trial.
-     */
     void callContestants(int team, boolean[] selectedContestants);
+
+    // Extra
+    int[] getTeamStrengths(int team);
+
+    void setTeamIsMatchEnd(int team, boolean isMatchEnd);
 }

@@ -27,45 +27,47 @@ public class TCoach extends Thread {
     private boolean[] selectContestants(int[] strengths) {
         // Tactic: choose contestants with the highest strength
         // TODO: maybe allow for different tactics
-        Integer[] indexes = new Integer[strengths.length];
-        for (int i = 0; i < indexes.length; i++) {
-            indexes[i] = i;
-        }
-        Arrays.sort(indexes, Comparator.comparingInt(i -> strengths[i]));
+        // Integer[] indexes = new Integer[strengths.length];
+        // for (int i = 0; i < indexes.length; i++) {
+        //     indexes[i] = i;
+        // }
+        // Arrays.sort(indexes, Comparator.comparingInt(i -> strengths[i]));
+        // boolean[] selectedContestants = new boolean[contestantsPerTeam];
+        // for (int i = 0; i < contestantsPerTrial; i++) {
+        //     selectedContestants[indexes[i]] = true;
+        // }
+        // for (int i = contestantsPerTrial; i < contestantsPerTeam; i++) {
+        //     selectedContestants[indexes[i]] = false;
+        // }
+        // return selectedContestants;
+        return new boolean[]{true, true, true, false, false}; // TODO: remove this line
+    }
+
+    private boolean[] selectAllContestants() {
         boolean[] selectedContestants = new boolean[contestantsPerTeam];
-        for (int i = 0; i < contestantsPerTrial; i++) {
-            selectedContestants[indexes[i]] = true;
-        }
-        for (int i = contestantsPerTrial; i < contestantsPerTeam; i++) {
-            selectedContestants[indexes[i]] = false;
-        }
+        Arrays.fill(selectedContestants, true);
         return selectedContestants;
     }
 
     @Override
     public void run() {
         log("thread started");
-        int[] strengths = new int[contestantsPerTeam];
-        for (int i = 0; i < contestantsPerTeam; i++) {
-            strengths[i] = 5;
-        }
-        boolean[] selectedContestants = new boolean[contestantsPerTeam];
-        for (int i = 0; i < contestantsPerTrial; i++) {
-            selectedContestants[i] = true;
-        }
-        for (int i = contestantsPerTrial; i < contestantsPerTeam; i++) {
-            selectedContestants[i] = false;
-        }
-        while (true) { // TODO: implement stopping condition
+        while (true) {
             log("wait for referee command");
-            contestantsBench.callContestants(team, selectedContestants);
+            boolean keepRunning = refereeSite.reviewNotes();
+            if (!keepRunning) {
+                // let contestants know the match is over
+                contestantsBench.setTeamIsMatchEnd(team, true);
+                contestantsBench.callContestants(team, selectAllContestants());
+                break;
+            }
             log("assemble team");
-            refereeSite.informReferee();
+            int[] strengths = contestantsBench.getTeamStrengths(team);
+            contestantsBench.callContestants(team, selectContestants(strengths));
             log("watch trial");
-            int information = playground.reviewNotes(team); // TODO: what information should be returned?
-            selectedContestants = selectContestants(strengths);
+            playground.informReferee(team);
         }
-        // log("thread finished");
+        log("thread finished");
     }
 
     private void log(String msg) {

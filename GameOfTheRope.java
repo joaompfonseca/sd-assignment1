@@ -18,7 +18,7 @@ public class GameOfTheRope {
 
         // Information sharing regions
         IPlayground playground = new MPlayground(N_CONTESTANTS_PER_TRIAL);
-        IContestantsBench contestantsBench = new MContestantsBench(N_CONTESTANTS_PER_TEAM, N_CONTESTANTS_PER_TRIAL);
+        IContestantsBench contestantsBench = new MContestantsBench(N_CONTESTANTS_PER_TEAM);
         IRefereeSite refereeSite = new MRefereeSite();
         // TODO: Initialize the general information repository
 
