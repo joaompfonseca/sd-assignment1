@@ -42,6 +42,18 @@ public class MContestantsBench implements IContestantsBench {
     public int[] getTeamStrengths(int team) {
         log("get strengths: team %d".formatted(team));
         TeamData teamData = this.teamData[team];
+        teamData.lock.lock();
+        try {
+            while (teamData.countSeatedDown < contestantsPerTeam) {
+                teamData.seatedDown.await(); // releases the lock and waits
+            }
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        finally {
+            teamData.lock.unlock();
+        }
         return teamData.strengths;
     }
 
