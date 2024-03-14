@@ -7,7 +7,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class MContestantsBench implements IContestantsBench {
     private class TeamData {
-        private final ReentrantLock lock;
         private final Condition seatedDown;
         private final Condition teamAssembled;
         private int countSeatedDown;
@@ -15,8 +14,7 @@ public class MContestantsBench implements IContestantsBench {
         private int[] strengths;
         private boolean isMatchEnd;
 
-        public TeamData() {
-            lock = new ReentrantLock();
+        public TeamData(ReentrantLock lock) {
             seatedDown = lock.newCondition();
             teamAssembled = lock.newCondition();
             countSeatedDown = 0;
@@ -26,6 +24,7 @@ public class MContestantsBench implements IContestantsBench {
         }
     }
 
+    private final ReentrantLock lock;
     private final int contestantsPerTeam;
     private final int maxStrength;
     private final TeamData[] teamData = new TeamData[2];
@@ -34,15 +33,16 @@ public class MContestantsBench implements IContestantsBench {
     public MContestantsBench(int contestantsPerTeam, int maxStrength) {
         this.contestantsPerTeam = contestantsPerTeam;
         this.maxStrength = maxStrength;
-        teamData[0] = new TeamData();
-        teamData[1] = new TeamData();
+        lock = new ReentrantLock();
+        teamData[0] = new TeamData(lock);
+        teamData[1] = new TeamData(lock);
     }
 
     @Override
     public int[] getTeamStrengths(int team) {
         log("get strengths: team %d".formatted(team));
         TeamData teamData = this.teamData[team];
-        teamData.lock.lock();
+        lock.lock();
         try {
             while (teamData.countSeatedDown < contestantsPerTeam) {
                 teamData.seatedDown.await(); // releases the lock and waits
@@ -52,7 +52,7 @@ public class MContestantsBench implements IContestantsBench {
             e.printStackTrace();
         }
         finally {
-            teamData.lock.unlock();
+            lock.unlock();
         }
         return teamData.strengths;
     }
@@ -61,16 +61,16 @@ public class MContestantsBench implements IContestantsBench {
     public void setTeamIsMatchEnd(int team, boolean isMatchEnd) {
         log("set is match end: team %d, is match end %b".formatted(team, isMatchEnd));
         TeamData teamData = this.teamData[team];
-        teamData.lock.lock();
+        lock.lock();
         teamData.isMatchEnd = isMatchEnd;
-        teamData.lock.unlock();
+        lock.unlock();
     }
 
     @Override
     public int seatDown(int team, int contestant, int strength) {
         log("seat down: team %d, contestant %d, strength %d".formatted(team, contestant, strength));
         TeamData teamData = this.teamData[team];
-        teamData.lock.lock();
+        lock.lock();
         try {
             teamData.countSeatedDown++;
             teamData.selected[contestant] = false;
@@ -87,7 +87,7 @@ public class MContestantsBench implements IContestantsBench {
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
-            teamData.lock.unlock();
+            lock.unlock();
         }
         return teamData.strengths[contestant];
     }
@@ -96,7 +96,7 @@ public class MContestantsBench implements IContestantsBench {
     public void callContestants(int team, boolean[] selected) {
         log("call contestants: team %d, selected %s".formatted(team, Arrays.toString(selected)));
         TeamData teamData = this.teamData[team];
-        teamData.lock.lock();
+        lock.lock();
         try {
             while (teamData.countSeatedDown < contestantsPerTeam) {
                 teamData.seatedDown.await(); // releases the lock and waits
@@ -106,7 +106,7 @@ public class MContestantsBench implements IContestantsBench {
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
-            teamData.lock.unlock();
+            lock.unlock();
         }
     }
 
@@ -114,9 +114,9 @@ public class MContestantsBench implements IContestantsBench {
     public boolean followCoachAdvice(int team) {
         log("follow coach advice: team %d".formatted(team));
         TeamData teamData = this.teamData[team];
-        teamData.lock.lock();
+        lock.lock();
         teamData.countSeatedDown--;
-        teamData.lock.unlock();
+        lock.unlock();
         return !teamData.isMatchEnd;
     }
 

@@ -5,12 +5,10 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class MPlayground implements IPlayground {
     private static class TeamData {
-        private final ReentrantLock lock;
         private final Condition trialReady;
         private int contestantsReady;
 
-        public TeamData() {
-            lock = new ReentrantLock();
+        public TeamData(ReentrantLock lock) {
             trialReady = lock.newCondition();
             contestantsReady = 0;
         }
@@ -30,8 +28,8 @@ public class MPlayground implements IPlayground {
     public MPlayground(int contestantsPerTrial) {
         this.contestantsPerTrial = contestantsPerTrial;
         lock = new ReentrantLock();
-        teamData[0] = new TeamData();
-        teamData[1] = new TeamData();
+        teamData[0] = new TeamData(lock);
+        teamData[1] = new TeamData(lock);
         refereeInformed = lock.newCondition();
         countInformed = 0;
         trialStarted = lock.newCondition();
@@ -50,13 +48,11 @@ public class MPlayground implements IPlayground {
     public void getReady(int team) {
         log("get ready: team %d".formatted(team));
         TeamData teamData = this.teamData[team];
-        teamData.lock.lock();
+        lock.lock();
         teamData.contestantsReady++;
         if (teamData.contestantsReady == contestantsPerTrial) {
             teamData.trialReady.signal(); // alerts coach
         }
-        teamData.lock.unlock();
-        lock.lock();
         try {
             trialStarted.await(); // releases lock and waits for referee
         } catch (InterruptedException e) {
@@ -70,18 +66,11 @@ public class MPlayground implements IPlayground {
     public void informReferee(int team) {
         log("inform referee: team %d".formatted(team));
         TeamData teamData = this.teamData[team];
-        teamData.lock.lock();
+        lock.lock();
         try {
             while (teamData.contestantsReady < contestantsPerTrial) {
                 teamData.trialReady.await(); // releases lock and waits
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            teamData.lock.unlock();
-        }
-        lock.lock();
-        try {
             countInformed++;
             if (countInformed == 2) {
                 refereeInformed.signal(); // alerts referee
