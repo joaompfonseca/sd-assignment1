@@ -9,6 +9,7 @@ public class MRefereeSite implements IRefereeSite {
     private final Condition coachesWaited;
     private int waiting;
     private final Condition refereeCommand;
+    private boolean isRefereeCommand;
     private boolean isMatchEnd;
     private int winTeamGame;
     private int winTeamMatch;
@@ -18,11 +19,11 @@ public class MRefereeSite implements IRefereeSite {
         coachesWaited = lock.newCondition();
         waiting = 0;
         refereeCommand = lock.newCondition();
+        isRefereeCommand = false;
         isMatchEnd = false;
         winTeamGame = -1;
         winTeamMatch = -1;
     }
-
 
     @Override
     public boolean reviewNotes() {
@@ -33,7 +34,13 @@ public class MRefereeSite implements IRefereeSite {
             if (waiting == 2) {
                 coachesWaited.signal(); // alerts referee
             }
-            refereeCommand.await(); // releases lock and waits for referee command
+            while (!isRefereeCommand) {
+                refereeCommand.await(); // releases lock and waits for referee command
+            }
+            waiting--;
+            if (waiting == 0) {
+                isRefereeCommand = false;
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -55,8 +62,8 @@ public class MRefereeSite implements IRefereeSite {
             while (waiting < 2) {
                 coachesWaited.await(); // releases lock and waits for coaches
             }
-            waiting = 0;
             isMatchEnd = false;
+            isRefereeCommand = true;
             refereeCommand.signalAll(); // alerts coaches
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -87,9 +94,9 @@ public class MRefereeSite implements IRefereeSite {
             }
             waiting = 0;
             isMatchEnd = true;
+            isRefereeCommand = true;
             refereeCommand.signalAll(); // alerts coaches
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
             lock.unlock();

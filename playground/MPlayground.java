@@ -20,10 +20,12 @@ public class MPlayground implements IPlayground {
     private final Condition refereeInformed;
     private int countInformed;
     private final Condition trialStarted;
+    private boolean isTrialStarted;
     private int ropePosition;
     private final Condition trialEnded;
     private int contestantsDone;
     private final Condition trialDecided;
+    private boolean isTrialDecided;
 
     public MPlayground(int contestantsPerTrial) {
         this.contestantsPerTrial = contestantsPerTrial;
@@ -33,9 +35,12 @@ public class MPlayground implements IPlayground {
         refereeInformed = lock.newCondition();
         countInformed = 0;
         trialStarted = lock.newCondition();
+        isTrialStarted = false;
+        ropePosition = 0;
         trialEnded = lock.newCondition();
         contestantsDone = 0;
         trialDecided = lock.newCondition();
+        isTrialDecided = false;
     }
 
     @Override
@@ -49,12 +54,14 @@ public class MPlayground implements IPlayground {
         log("get ready: team %d".formatted(team));
         TeamData teamData = this.teamData[team];
         lock.lock();
-        teamData.contestantsReady++;
-        if (teamData.contestantsReady == contestantsPerTrial) {
-            teamData.trialReady.signal(); // alerts coach
-        }
         try {
-            trialStarted.await(); // releases lock and waits for referee
+            teamData.contestantsReady++;
+            if (teamData.contestantsReady == contestantsPerTrial) {
+                teamData.trialReady.signal(); // alerts coach
+            }
+            while (!isTrialStarted) {
+                trialStarted.await(); // releases lock and waits for referee
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -75,7 +82,9 @@ public class MPlayground implements IPlayground {
             if (countInformed == 2) {
                 refereeInformed.signal(); // alerts referee
             }
-            trialDecided.await(); // releases lock and waits for referee decision
+            while (!isTrialDecided) {
+                trialDecided.await(); // releases lock and waits for referee decision
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -91,6 +100,8 @@ public class MPlayground implements IPlayground {
             while (countInformed < 2) {
                 refereeInformed.await(); // releases lock and waits for the last coach
             }
+            isTrialDecided = false;
+            isTrialStarted = true;
             trialStarted.signalAll(); // alerts contestants
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -117,7 +128,9 @@ public class MPlayground implements IPlayground {
             if (contestantsDone == 2 * contestantsPerTrial) {
                 trialEnded.signal(); // alerts referee
             }
-            trialDecided.await(); // releases lock and waits for referee decision
+            while (!isTrialDecided) {
+                trialDecided.await(); // releases lock and waits for referee decision
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -137,6 +150,8 @@ public class MPlayground implements IPlayground {
             teamData[1].contestantsReady = 0;
             countInformed = 0;
             contestantsDone = 0;
+            isTrialStarted = false;
+            isTrialDecided = true;
             trialDecided.signalAll(); // alerts contestants and coaches
         } catch (InterruptedException e) {
             e.printStackTrace();
