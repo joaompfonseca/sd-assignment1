@@ -1,4 +1,4 @@
-package contestansbench;
+package contestantsbench;
 
 import java.util.Arrays;
 import java.util.concurrent.locks.Condition;

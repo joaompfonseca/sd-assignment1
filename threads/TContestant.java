@@ -1,6 +1,6 @@
 package threads;
 
-import contestansbench.IContestantsBench_Contestant;
+import contestantsbench.IContestantsBench_Contestant;
 import playground.IPlayground_Contestant;
 
 public class TContestant extends Thread {

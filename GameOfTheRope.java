@@ -1,4 +1,4 @@
-import contestansbench.IContestantsBench;
+import contestantsbench.IContestantsBench;
 import playground.IPlayground;
 import playground.MPlayground;
 import refereesite.IRefereeSite;
@@ -6,7 +6,7 @@ import refereesite.MRefereeSite;
 import threads.TCoach;
 import threads.TContestant;
 import threads.TReferee;
-import contestansbench.MContestantsBench;
+import contestantsbench.MContestantsBench;
 
 // Game of the Rope using ReentrantLocks
 public class GameOfTheRope {

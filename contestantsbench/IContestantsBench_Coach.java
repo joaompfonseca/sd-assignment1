@@ -1,4 +1,4 @@
-package contestansbench;
+package contestantsbench;
 
 public interface IContestantsBench_Coach {
     void callContestants(int team, boolean[] selectedContestants);

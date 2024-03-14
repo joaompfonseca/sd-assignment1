@@ -1,6 +1,6 @@
 package threads;
 
-import contestansbench.IContestantsBench_Coach;
+import contestantsbench.IContestantsBench_Coach;
 import playground.IPlayground_Coach;
 import refereesite.IRefereeSite_Coach;
 
