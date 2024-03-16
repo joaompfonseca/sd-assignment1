@@ -15,6 +15,7 @@ public class GameOfTheRope {
     private final static int N_CONTESTANTS_PER_TEAM = 5;
     private final static int N_CONTESTANTS_PER_TRIAL = 3;
     private final static int MAX_STRENGTH = 5;
+    private final static int MAX_SLEEP_MS = 250;
 
 
     public static void main(String[] args) {
@@ -38,7 +39,7 @@ public class GameOfTheRope {
         Thread[] tContestants = new Thread[2 * N_CONTESTANTS_PER_TEAM];
         for (int team = 0; team < 2; team++) {
             for (int number = 0; number < N_CONTESTANTS_PER_TEAM; number++) {
-                tContestants[team * N_CONTESTANTS_PER_TEAM + number] = new TContestant(contestantsBench, playground, team, number, MAX_STRENGTH);
+                tContestants[team * N_CONTESTANTS_PER_TEAM + number] = new TContestant(contestantsBench, playground, team, number, MAX_STRENGTH, MAX_SLEEP_MS);
             }
         }
 

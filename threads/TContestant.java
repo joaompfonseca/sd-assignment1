@@ -9,13 +9,15 @@ public class TContestant extends Thread {
     private final int team;
     private final int contestant;
     private int strength;
+    private final int maxSleepMs;
 
-    public TContestant(IContestantsBench_Contestant contestantsBench, IPlayground_Contestant playground, int team, int contestant, int strength) {
+    public TContestant(IContestantsBench_Contestant contestantsBench, IPlayground_Contestant playground, int team, int contestant, int strength, int maxSleepMs) {
         this.contestantsBench = contestantsBench;
         this.playground = playground;
         this.team = team;
         this.contestant = contestant;
         this.strength = strength;
+        this.maxSleepMs = maxSleepMs;
     }
 
     @Override
@@ -31,6 +33,12 @@ public class TContestant extends Thread {
             log("stand in position");
             playground.getReady(team);
             log("do your best");
+            try {
+                Thread.sleep((long) (Math.random() * maxSleepMs));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                break;
+            }
             strength = playground.pullTheRope(team, strength);
             playground.amDone();
         }
