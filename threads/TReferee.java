@@ -4,14 +4,16 @@ import playground.IPlayground_Referee;
 import refereesite.IRefereeSite_Referee;
 
 public class TReferee extends Thread {
-    private final int N_GAMES_PER_MATCH = 3;
-    private final int N_TRIALS_PER_GAME = 6;
     private final IPlayground_Referee playground;
     private final IRefereeSite_Referee refereeSite;
+    private final int gamesPerMatch;
+    private final int trialsPerGame;
 
-    public TReferee(IPlayground_Referee playground, IRefereeSite_Referee refereeSite) {
+    public TReferee(IPlayground_Referee playground, IRefereeSite_Referee refereeSite, int gamesPerMatch, int trialsPerGame) {
         this.playground = playground;
         this.refereeSite = refereeSite;
+        this.gamesPerMatch = gamesPerMatch;
+        this.trialsPerGame = trialsPerGame;
     }
 
     @Override
@@ -19,12 +21,12 @@ public class TReferee extends Thread {
         log("thread started");
         log("start of the match");
         int[] gameWins = new int[2];
-        for (int game = 0; game < N_GAMES_PER_MATCH; game++) {
+        for (int game = 0; game < gamesPerMatch; game++) {
             log("start of a game");
             refereeSite.announceNewGame();
             int ropePosition = 0;
             playground.setRopePosition(ropePosition);
-            for (int trial = 0; trial < N_TRIALS_PER_GAME; trial++) {
+            for (int trial = 0; trial < trialsPerGame; trial++) {
                 log("teams ready");
                 refereeSite.callTrial();
                 log("wait for trial conclusion");

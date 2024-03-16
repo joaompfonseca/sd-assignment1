@@ -10,9 +10,11 @@ import contestantsbench.MContestantsBench;
 
 // Game of the Rope using ReentrantLocks
 public class GameOfTheRope {
-    final static int N_CONTESTANTS_PER_TEAM = 5;
-    final static int N_CONTESTANTS_PER_TRIAL = 3;
-    final static int MAX_STRENGTH = 5;
+    private final static int N_GAMES_PER_MATCH = 3;
+    private final static int N_TRIALS_PER_GAME = 6;
+    private final static int N_CONTESTANTS_PER_TEAM = 5;
+    private final static int N_CONTESTANTS_PER_TRIAL = 3;
+    private final static int MAX_STRENGTH = 5;
 
 
     public static void main(String[] args) {
@@ -24,7 +26,7 @@ public class GameOfTheRope {
         // TODO: Initialize the general information repository
 
         // Referee
-        Thread tReferee = new TReferee(playground, refereeSite);
+        Thread tReferee = new TReferee(playground, refereeSite, N_GAMES_PER_MATCH, N_TRIALS_PER_GAME);
 
         // Coaches
         Thread[] tCoaches = new Thread[2];
