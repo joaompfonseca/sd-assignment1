@@ -32,7 +32,7 @@ public class GameOfTheRope {
         // Coaches
         Thread[] tCoaches = new Thread[2];
         for (int team = 0; team < 2; team++) {
-            tCoaches[team] = new TCoach(contestantsBench, playground, refereeSite, team, N_CONTESTANTS_PER_TEAM, N_CONTESTANTS_PER_TRIAL);
+            tCoaches[team] = new TCoach(contestantsBench, playground, refereeSite, team, N_CONTESTANTS_PER_TEAM, N_CONTESTANTS_PER_TRIAL, Math.random());
         }
 
         // Contestants

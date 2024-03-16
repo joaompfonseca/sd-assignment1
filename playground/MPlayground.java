@@ -115,8 +115,12 @@ public class MPlayground implements IPlayground {
         log("pull the rope: team %d, strength %d".formatted(team, strength));
         lock.lock();
         ropePosition += (team == 0) ? -strength : strength;
+        // If strength is already the minimum (1), it will remain like that
+        if (strength > 1) {
+            strength--;
+        }
         lock.unlock();
-        return strength - 1;
+        return strength;
     }
 
     @Override
