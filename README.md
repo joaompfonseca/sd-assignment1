@@ -3,7 +3,7 @@
 ## Description
 
 The assignment goal was to develop a multithreaded implementation of the "Game of the Rope", as described in the
-[description of the assignement](description.pdf) provided by the course's professor. The solution was implemented in
+[description of the assignment](description.pdf) provided by the course's professor. The solution was implemented in
 Java 21 and uses reentrant locks to ensure mutual exclusion and condition variables to ensure synchronization between
 threads.
 
