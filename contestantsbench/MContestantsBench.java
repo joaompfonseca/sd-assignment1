@@ -35,7 +35,7 @@ public class MContestantsBench implements IContestantsBench {
         /**
          * The strengths of the contestants.
          */
-        private int[] strengths;
+        private final int[] strengths;
         /**
          * Flag to indicate if the match has ended.
          */
