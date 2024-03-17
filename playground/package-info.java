@@ -1,5 +1,5 @@
 /**
- * Contains interfaces of the playground for the Coach, the Contestant and the Referee.
+ * Contains interfaces of the playground for the coach, the contestant and the referee.
  * Contains an implementation of the playground.
  */
 package playground;

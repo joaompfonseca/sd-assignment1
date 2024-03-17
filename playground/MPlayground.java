@@ -3,30 +3,92 @@ package playground;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Implementation of the playground monitor.
+ *
+ * @author Diogo Paiva (103183)
+ * @author João Fonseca (103154)
+ * @version 1.0
+ */
 public class MPlayground implements IPlayground {
+    /**
+     * Representation of team specific data.
+     */
     private static class TeamData {
+        /**
+         * The condition variable for trial ready.
+         */
         private final Condition trialReady;
+        /**
+         * The number of contestants ready.
+         */
         private int contestantsReady;
 
+        /**
+         * Instantiation of team specific data.
+         *
+         * @param lock the lock from the playground
+         */
         public TeamData(ReentrantLock lock) {
             trialReady = lock.newCondition();
             contestantsReady = 0;
         }
     }
 
+    /**
+     * The number of contestants per trial.
+     */
     private final int contestantsPerTrial;
+    /**
+     * The team specific data.
+     */
     private final TeamData[] teamData = new TeamData[2];
+    /**
+     * The lock.
+     */
     private final ReentrantLock lock;
+    /**
+     * The condition variable for referee informed.
+     */
     private final Condition refereeInformed;
+    /**
+     * The number of coaches informed.
+     */
     private int countInformed;
+    /**
+     * The condition variable for trial started.
+     */
     private final Condition trialStarted;
+    /**
+     * Flag to indicate if the trial has started.
+     */
     private boolean isTrialStarted;
+    /**
+     * The rope position.
+     */
     private int ropePosition;
+    /**
+     * The condition variable for trial ended.
+     */
     private final Condition trialEnded;
+    /**
+     * The number of contestants done.
+     */
     private int contestantsDone;
+    /**
+     * The condition variable for trial decided.
+     */
     private final Condition trialDecided;
+    /**
+     * Flag to indicate if the trial has been decided.
+     */
     private boolean isTrialDecided;
 
+    /**
+     * Instantiation of the playground monitor.
+     *
+     * @param contestantsPerTrial the number of contestants per trial
+     */
     public MPlayground(int contestantsPerTrial) {
         this.contestantsPerTrial = contestantsPerTrial;
         lock = new ReentrantLock();
@@ -43,12 +105,23 @@ public class MPlayground implements IPlayground {
         isTrialDecided = false;
     }
 
+    /**
+     * The referee sets the rope position.
+     *
+     * @param ropePosition the rope position
+     */
     @Override
     public void setRopePosition(int ropePosition) {
         log("set rope position: %d".formatted(ropePosition));
         this.ropePosition = ropePosition;
     }
 
+    /**
+     * The last contestant from each team informs the coach that they are ready. The contestant waits for the trial to
+     * start by the referee.
+     *
+     * @param team the team
+     */
     @Override
     public void getReady(int team) {
         log("get ready: team %d".formatted(team));
@@ -69,6 +142,12 @@ public class MPlayground implements IPlayground {
         }
     }
 
+    /**
+     * The coach waits for the contestants from his team to be ready. The last coach informs the referee that the team is
+     * ready. The coach waits for the trial to be decided by the referee.
+     *
+     * @param team the team
+     */
     @Override
     public void informReferee(int team) {
         log("inform referee: team %d".formatted(team));
@@ -92,6 +171,9 @@ public class MPlayground implements IPlayground {
         }
     }
 
+    /**
+     * The referee waits for the coaches to be ready to announce the start of the trial.
+     */
     @Override
     public void startTrial() {
         log("start trial");
@@ -110,6 +192,14 @@ public class MPlayground implements IPlayground {
         }
     }
 
+    /**
+     * The contestant pulls the rope with a similar distance as his current strength. The contestant loses 1 unit of
+     * strength after pulling the rope.
+     *
+     * @param team     the team
+     * @param strength the current strength
+     * @return the updated strength
+     */
     @Override
     public int pullTheRope(int team, int strength) {
         log("pull the rope: team %d, strength %d".formatted(team, strength));
@@ -123,6 +213,10 @@ public class MPlayground implements IPlayground {
         return strength;
     }
 
+    /**
+     * The last contestant informs the referee that the trial is over. The contestant waits for the referee to decide
+     * the result of the trial.
+     */
     @Override
     public void amDone() {
         log("am done");
@@ -142,6 +236,11 @@ public class MPlayground implements IPlayground {
         }
     }
 
+    /**
+     * The referee waits for the contestants to be done to decide the result of the trial.
+     *
+     * @return the rope position
+     */
     @Override
     public int assertTrialDecision() {
         log("assert trial decision");
@@ -165,6 +264,11 @@ public class MPlayground implements IPlayground {
         return ropePosition;
     }
 
+    /**
+     * Logs a message.
+     *
+     * @param msg the message to log
+     */
     private void log(String msg) {
         System.out.printf("[Playground]: %s\n", msg);
     }

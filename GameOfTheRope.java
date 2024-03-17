@@ -8,7 +8,18 @@ import threads.TContestant;
 import threads.TReferee;
 import contestantsbench.MContestantsBench;
 
-// Game of the Rope using ReentrantLocks
+/**
+ * Main class of the Game of the Rope problem.
+ * <p>
+ * Contains the configuration of the problem and the main method, that instantiates the information sharing regions
+ * - playground, contestants bench and referee site - and the threads - referee, coaches and contestants.
+ * <p>
+ * It starts the threads and waits for them to finish.
+ *
+ * @author Diogo Paiva (103183)
+ * @author João Fonseca (103154)
+ * @version 1.0
+ */
 public class GameOfTheRope {
     private final static int N_GAMES_PER_MATCH = 3;
     private final static int N_TRIALS_PER_GAME = 6;

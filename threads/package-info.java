@@ -1,4 +1,4 @@
 /**
- * Contains thread implementations of Coach, Contestant, and Referee entities.
+ * Contains thread implementations of coach, contestant, and referee entities.
  */
 package threads;
