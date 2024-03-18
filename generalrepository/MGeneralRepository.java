@@ -7,38 +7,93 @@ import java.util.concurrent.locks.ReentrantLock;
 import static generalrepository.EGeneralRepository.*;
 
 public class MGeneralRepository implements IGeneralRepository {
-
-    // Struct for contestants (Status and Strength)
+    /**
+     * Representation of a contestant.
+     */
     private static class Contestant {
+        /**
+         * The status of the contestant.
+         */
         private String status;
-
+        /**
+         * The strength of the contestant.
+         */
         private int strength;
 
+        /**
+         * Instantiation of a contestant.
+         *
+         * @param status the status of the contestant
+         * @param strength the strength of the contestant
+         */
         public Contestant(String status, int strength) {
             this.status = status;
             this.strength = strength;
         }
     }
 
-    // DataSets
+    /**
+     * The referee status.
+     */
     private String refereeStatus;
+    /**
+     * The coaches team 1 status.
+     */
     private String coachesTeam1Status;
+    /**
+     * The coaches team 2 status.
+     */
     private String coachesTeam2Status;
+    /**
+     * The contestants team 1.
+     */
     private final HashMap<Integer, Contestant> contestantsTeam1;
+    /**
+     * The contestants team 2.
+     */
     private final HashMap<Integer, Contestant> contestantsTeam2;
-    private ArrayList<Integer> selectedContestantsTeam1;
-    private ArrayList<Integer> selectedContestantsTeam2;
-    private HashMap<Integer,Integer> wonGames;
+    /**
+     * The selected contestants team 1.
+     */
+    private final ArrayList<Integer> selectedContestantsTeam1;
+    /**
+     * The selected contestants team 2.
+     */
+    private final ArrayList<Integer> selectedContestantsTeam2;
+    /**
+     * The won games.
+     */
+    private final HashMap<Integer,Integer> wonGames;
+    /**
+     * The rope position.
+     */
     private int ropePosition;
+    /**
+     * The next rope position.
+     */
     private int nextRopePosition;
+    /**
+     * The number of trials.
+     */
     private int nTrials;
+    /**
+     * The number of games.
+     */
     private int nGames;
+    /**
+     * The match end flag.
+     */
     private boolean matchEnd;
+    /**
+     * The lock.
+     */
+    private final ReentrantLock lock;
 
-    // Reentrant Lock
-    private final ReentrantLock lock = new ReentrantLock();
-
-    // General Repository constructor
+    /**
+     * Instantiation of the general repository.
+     *
+     * @param nContestants the number of contestants
+     */
     public MGeneralRepository(int nContestants) {
         this.refereeStatus = START_OF_THE_MATCH.label;
         this.coachesTeam1Status = null;
@@ -61,9 +116,18 @@ public class MGeneralRepository implements IGeneralRepository {
         this.nTrials = 0;
         this.nGames = 0;
 
+        this.lock = new ReentrantLock();
+
         System.out.printf("                               Game of the Rope - Description of the internal state%n%n");
     }
 
+    /**
+     * Set the new state of the contestant when he seats down.
+     *
+     * @param team the team
+     * @param id the contestant id
+     * @param increaseStrength if the strength of the contestant should be increased
+     */
     @Override
     public void seatDown(int team, int id, boolean increaseStrength) {
         lock.lock();
@@ -87,6 +151,11 @@ public class MGeneralRepository implements IGeneralRepository {
         lock.unlock();
     }
 
+    /**
+     * Set the new state of the coach when he calls the contestants.
+     *
+     * @param team     the team
+     */
     @Override
     public void callContestants(int team) {
         lock.lock();
@@ -104,6 +173,12 @@ public class MGeneralRepository implements IGeneralRepository {
         lock.unlock();
     }
 
+    /**
+     * Set the new state of the contestant when he is called by the coach.
+     *
+     * @param team     the team
+     * @param id       the contestant id
+     */
     @Override
     public void followCoachAdvice(int team, int id) {
         lock.lock();
@@ -121,6 +196,12 @@ public class MGeneralRepository implements IGeneralRepository {
         lock.unlock();
     }
 
+    /**
+     * Set the new state of the contestant when he is getting ready.
+     *
+     * @param team      the team
+     * @param id        the id contestant
+     */
     @Override
     public void getReady(int team, int id) {
         lock.lock();
@@ -138,6 +219,11 @@ public class MGeneralRepository implements IGeneralRepository {
         lock.unlock();
     }
 
+    /**
+     * Set the new state of the coach when he informs the referee.
+     *
+     * @param team the team
+     */
     @Override
     public void informReferee(int team) {
         lock.lock();
@@ -153,6 +239,9 @@ public class MGeneralRepository implements IGeneralRepository {
         lock.unlock();
     }
 
+    /**
+     * Set the new state of the referee when he starts the trial.
+     */
     @Override
     public void startTrial() {
         lock.lock();
@@ -170,6 +259,12 @@ public class MGeneralRepository implements IGeneralRepository {
         lock.unlock();
     }
 
+    /**
+     * Set the new state of the contestant when he pulls the rope.
+     *
+     * @param team     the team
+     * @param contestant  the contestant
+     */
     @Override
     public void pullTheRope(int team, int contestant) {
         lock.lock();
@@ -187,6 +282,9 @@ public class MGeneralRepository implements IGeneralRepository {
         lock.unlock();
     }
 
+    /**
+     * Set the new state of the contestant when he's done.
+     */
     @Override
     public void amDone() {
         lock.lock();
@@ -198,6 +296,11 @@ public class MGeneralRepository implements IGeneralRepository {
         lock.unlock();
     }
 
+    /**
+     * Set the new state of the referee when he asserts the trial decision.
+     *
+     * @param p the rope position
+     */
     @Override
     public void assertTrialDecision(int p) {
         lock.lock();
@@ -210,6 +313,11 @@ public class MGeneralRepository implements IGeneralRepository {
         lock.unlock();
     }
 
+    /**
+     * Set the new state of the coach when he waits for the referee.
+     *
+     * @param team      the team
+     */
     @Override
     public void reviewNotes(int team) {
         lock.lock();
@@ -227,6 +335,9 @@ public class MGeneralRepository implements IGeneralRepository {
         lock.unlock();
     }
 
+    /**
+     * Set the new state of the referee when he announces a new game.
+     */
     @Override
     public void announceNewGame() {
         lock.lock();
@@ -243,6 +354,9 @@ public class MGeneralRepository implements IGeneralRepository {
         lock.unlock();
     }
 
+    /**
+     * Set the new state of the referee when he calls a trial.
+     */
     @Override
     public void callTrial() {
         lock.lock();
@@ -259,6 +373,12 @@ public class MGeneralRepository implements IGeneralRepository {
         lock.unlock();
     }
 
+    /**
+     * Set the new state of the referee when he declares the game winner.
+     *
+     * @param team the team
+     * @param knockout the knockout flag
+     */
     @Override
     public void declareGameWinner(int team, boolean knockout) {
         lock.lock();
@@ -286,6 +406,11 @@ public class MGeneralRepository implements IGeneralRepository {
         lock.unlock();
     }
 
+    /**
+     * Set the new state of the referee when he declares the match winner.
+     *
+     * @param team the team
+     */
     @Override
     public void declareMatchWinner(int team) {
         lock.lock();
@@ -307,6 +432,9 @@ public class MGeneralRepository implements IGeneralRepository {
         lock.unlock();
     }
 
+    /**
+     * Print the current state of the game.
+     */
     public void print() {
 
         String rStatus = refereeStatus == null ? "###" : refereeStatus;

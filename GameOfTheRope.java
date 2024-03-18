@@ -1,6 +1,6 @@
-import contestansbench.IContestantsBench;
 import generalrepository.IGeneralRepository;
 import generalrepository.MGeneralRepository;
+import contestantsbench.IContestantsBench;
 import playground.IPlayground;
 import playground.MPlayground;
 import refereesite.IRefereeSite;
@@ -8,13 +8,27 @@ import refereesite.MRefereeSite;
 import threads.TCoach;
 import threads.TContestant;
 import threads.TReferee;
-import contestansbench.MContestantsBench;
+import contestantsbench.MContestantsBench;
 
-// Game of the Rope using ReentrantLocks
+/**
+ * Main class of the Game of the Rope problem.
+ * <p>
+ * Contains the configuration of the problem and the main method, that instantiates the information sharing regions
+ * - playground, contestants bench and referee site - and the threads - referee, coaches and contestants.
+ * <p>
+ * It starts the threads and waits for them to finish.
+ *
+ * @author Diogo Paiva (103183)
+ * @author João Fonseca (103154)
+ * @version 1.0
+ */
 public class GameOfTheRope {
-    final static int N_CONTESTANTS_PER_TEAM = 5;
-    final static int N_CONTESTANTS_PER_TRIAL = 3;
-    final static int MAX_STRENGTH = 5;
+    private final static int N_GAMES_PER_MATCH = 3;
+    private final static int N_TRIALS_PER_GAME = 6;
+    private final static int N_CONTESTANTS_PER_TEAM = 5;
+    private final static int N_CONTESTANTS_PER_TRIAL = 3;
+    private final static int MAX_STRENGTH = 5;
+    private final static int MAX_SLEEP_MS = 250;
 
     public static void main(String[] args) {
 
@@ -25,19 +39,19 @@ public class GameOfTheRope {
         IRefereeSite refereeSite = new MRefereeSite(generalRepository);
 
         // Referee
-        Thread tReferee = new TReferee(playground, refereeSite);
+        Thread tReferee = new TReferee(playground, refereeSite, N_GAMES_PER_MATCH, N_TRIALS_PER_GAME);
 
         // Coaches
         Thread[] tCoaches = new Thread[2];
         for (int team = 0; team < 2; team++) {
-            tCoaches[team] = new TCoach(contestantsBench, playground, refereeSite, team, N_CONTESTANTS_PER_TEAM, N_CONTESTANTS_PER_TRIAL);
+            tCoaches[team] = new TCoach(contestantsBench, playground, refereeSite, team, N_CONTESTANTS_PER_TEAM, N_CONTESTANTS_PER_TRIAL, Math.random());
         }
 
         // Contestants
         Thread[] tContestants = new Thread[2 * N_CONTESTANTS_PER_TEAM];
         for (int team = 0; team < 2; team++) {
             for (int number = 0; number < N_CONTESTANTS_PER_TEAM; number++) {
-                tContestants[team * N_CONTESTANTS_PER_TEAM + number] = new TContestant(contestantsBench, playground, team, number, MAX_STRENGTH);
+                tContestants[team * N_CONTESTANTS_PER_TEAM + number] = new TContestant(contestantsBench, playground, team, number, MAX_STRENGTH, MAX_SLEEP_MS);
             }
         }
 

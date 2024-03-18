@@ -3,29 +3,64 @@ package threads;
 import playground.IPlayground_Referee;
 import refereesite.IRefereeSite_Referee;
 
+/**
+ * Referee thread.
+ * <p>
+ * The referee is the main entity responsible for the match. It starts the match, the games and the trials, and
+ * declares the winner of the match.
+ *
+ * @author Diogo Paiva (103183)
+ * @author João Fonseca (103154)
+ * @version 1.0
+ */
 public class TReferee extends Thread {
-    private final int N_GAMES_PER_MATCH = 3;
-    private final int N_TRIALS_PER_GAME = 6;
+    /**
+     * Reference the playground.
+     */
     private final IPlayground_Referee playground;
+    /**
+     * Reference the referee site.
+     */
     private final IRefereeSite_Referee refereeSite;
+    /**
+     * The number of games per match.
+     */
+    private final int gamesPerMatch;
+    /**
+     * The number of trials per game.
+     */
+    private final int trialsPerGame;
 
-    public TReferee(IPlayground_Referee playground, IRefereeSite_Referee refereeSite) {
+    /**
+     * Instantiation of a referee thread.
+     *
+     * @param playground    reference to the playground
+     * @param refereeSite   reference to the referee site
+     * @param gamesPerMatch the number of games per match
+     * @param trialsPerGame the number of trials per game
+     */
+    public TReferee(IPlayground_Referee playground, IRefereeSite_Referee refereeSite, int gamesPerMatch, int trialsPerGame) {
         this.playground = playground;
         this.refereeSite = refereeSite;
+        this.gamesPerMatch = gamesPerMatch;
+        this.trialsPerGame = trialsPerGame;
     }
 
+    /**
+     * The referee thread life cycle.
+     */
     @Override
     public void run() {
         //log("thread started");
         //log("start of the match");
         int[] gameWins = new int[2];
-        for (int game = 0; game < N_GAMES_PER_MATCH; game++) {
+        for (int game = 0; game < gamesPerMatch; game++) {
             boolean knockout = false;
             //log("start of a game");
             refereeSite.announceNewGame();
             int ropePosition = 0;
             playground.setRopePosition(ropePosition);
-            for (int trial = 0; trial < N_TRIALS_PER_GAME; trial++) {
+            for (int trial = 0; trial < trialsPerGame; trial++) {
                 //log("teams ready");
                 refereeSite.callTrial();
                 //log("wait for trial conclusion");
@@ -62,6 +97,11 @@ public class TReferee extends Thread {
         //log("thread finished");
     }
 
+    /**
+     * Logs a message.
+     *
+     * @param msg the message to log
+     */
     private void log(String msg) {
         System.out.printf("[Referee]: %s\n", msg);
     }
