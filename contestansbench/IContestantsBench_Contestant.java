@@ -3,5 +3,5 @@ package contestansbench;
 public interface IContestantsBench_Contestant {
     int seatDown(int team, int contestant, int strength);
 
-    boolean followCoachAdvice(int team);
+    boolean followCoachAdvice(int team, int contestant);
 }

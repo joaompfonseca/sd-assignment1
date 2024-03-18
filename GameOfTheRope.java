@@ -1,4 +1,6 @@
 import contestansbench.IContestantsBench;
+import generalrepository.IGeneralRepository;
+import generalrepository.MGeneralRepository;
 import playground.IPlayground;
 import playground.MPlayground;
 import refereesite.IRefereeSite;
@@ -14,14 +16,13 @@ public class GameOfTheRope {
     final static int N_CONTESTANTS_PER_TRIAL = 3;
     final static int MAX_STRENGTH = 5;
 
-
     public static void main(String[] args) {
 
         // Information sharing regions
-        IPlayground playground = new MPlayground(N_CONTESTANTS_PER_TRIAL);
-        IContestantsBench contestantsBench = new MContestantsBench(N_CONTESTANTS_PER_TEAM, MAX_STRENGTH);
-        IRefereeSite refereeSite = new MRefereeSite();
-        // TODO: Initialize the general information repository
+        IGeneralRepository generalRepository = new MGeneralRepository(N_CONTESTANTS_PER_TEAM);
+        IPlayground playground = new MPlayground(N_CONTESTANTS_PER_TRIAL, generalRepository);
+        IContestantsBench contestantsBench = new MContestantsBench(N_CONTESTANTS_PER_TEAM, MAX_STRENGTH, generalRepository);
+        IRefereeSite refereeSite = new MRefereeSite(generalRepository);
 
         // Referee
         Thread tReferee = new TReferee(playground, refereeSite);

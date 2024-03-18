@@ -1,5 +1,7 @@
 package playground;
 
+import generalrepository.IGeneralRepository_Playground;
+
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -26,8 +28,9 @@ public class MPlayground implements IPlayground {
     private int contestantsDone;
     private final Condition trialDecided;
     private boolean isTrialDecided;
+    private IGeneralRepository_Playground generalRepository;
 
-    public MPlayground(int contestantsPerTrial) {
+    public MPlayground(int contestantsPerTrial, IGeneralRepository_Playground generalRepository) {
         this.contestantsPerTrial = contestantsPerTrial;
         lock = new ReentrantLock();
         teamData[0] = new TeamData(lock);
@@ -41,21 +44,23 @@ public class MPlayground implements IPlayground {
         contestantsDone = 0;
         trialDecided = lock.newCondition();
         isTrialDecided = false;
+        this.generalRepository = generalRepository;
     }
 
     @Override
     public void setRopePosition(int ropePosition) {
-        log("set rope position: %d".formatted(ropePosition));
+        //log("set rope position: %d".formatted(ropePosition));
         this.ropePosition = ropePosition;
     }
 
     @Override
-    public void getReady(int team) {
-        log("get ready: team %d".formatted(team));
+    public void getReady(int team, int contestant) {
+        //log("get ready: team %d".formatted(team));
         TeamData teamData = this.teamData[team];
         lock.lock();
         try {
             teamData.contestantsReady++;
+            generalRepository.getReady(team, contestant);
             if (teamData.contestantsReady == contestantsPerTrial) {
                 teamData.trialReady.signal(); // alerts coach
             }
@@ -71,7 +76,7 @@ public class MPlayground implements IPlayground {
 
     @Override
     public void informReferee(int team) {
-        log("inform referee: team %d".formatted(team));
+        //log("inform referee: team %d".formatted(team));
         TeamData teamData = this.teamData[team];
         lock.lock();
         try {
@@ -79,6 +84,7 @@ public class MPlayground implements IPlayground {
                 teamData.trialReady.await(); // releases lock and waits
             }
             countInformed++;
+            generalRepository.informReferee(team);
             if (countInformed == 2) {
                 refereeInformed.signal(); // alerts referee
             }
@@ -94,7 +100,7 @@ public class MPlayground implements IPlayground {
 
     @Override
     public void startTrial() {
-        log("start trial");
+        //log("start trial");
         lock.lock();
         try {
             while (countInformed < 2) {
@@ -102,6 +108,7 @@ public class MPlayground implements IPlayground {
             }
             isTrialDecided = false;
             isTrialStarted = true;
+            generalRepository.startTrial();
             trialStarted.signalAll(); // alerts contestants
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -111,20 +118,22 @@ public class MPlayground implements IPlayground {
     }
 
     @Override
-    public int pullTheRope(int team, int strength) {
-        log("pull the rope: team %d, strength %d".formatted(team, strength));
+    public int pullTheRope(int team, int strength, int contestant) {
+        //log("pull the rope: team %d, strength %d".formatted(team, strength));
         lock.lock();
         ropePosition += (team == 0) ? -strength : strength;
+        generalRepository.pullTheRope(team, contestant);
         lock.unlock();
         return strength - 1;
     }
 
     @Override
     public void amDone() {
-        log("am done");
+        //log("am done");
         lock.lock();
         try {
             contestantsDone++;
+            generalRepository.amDone();
             if (contestantsDone == 2 * contestantsPerTrial) {
                 trialEnded.signal(); // alerts referee
             }
@@ -140,7 +149,7 @@ public class MPlayground implements IPlayground {
 
     @Override
     public int assertTrialDecision() {
-        log("assert trial decision");
+        //log("assert trial decision");
         lock.lock();
         try {
             while (contestantsDone < 2 * contestantsPerTrial) {
@@ -152,6 +161,7 @@ public class MPlayground implements IPlayground {
             contestantsDone = 0;
             isTrialStarted = false;
             isTrialDecided = true;
+            generalRepository.assertTrialDecision(ropePosition);
             trialDecided.signalAll(); // alerts contestants and coaches
         } catch (InterruptedException e) {
             e.printStackTrace();

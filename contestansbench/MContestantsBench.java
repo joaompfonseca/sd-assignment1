@@ -1,5 +1,7 @@
 package contestansbench;
 
+import generalrepository.IGeneralRepository_Bench;
+
 import java.util.Arrays;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -28,19 +30,20 @@ public class MContestantsBench implements IContestantsBench {
     private final int contestantsPerTeam;
     private final int maxStrength;
     private final TeamData[] teamData = new TeamData[2];
+    private IGeneralRepository_Bench generalRepository;
 
-
-    public MContestantsBench(int contestantsPerTeam, int maxStrength) {
+    public MContestantsBench(int contestantsPerTeam, int maxStrength, IGeneralRepository_Bench generalRepository) {
         this.contestantsPerTeam = contestantsPerTeam;
         this.maxStrength = maxStrength;
         lock = new ReentrantLock();
         teamData[0] = new TeamData(lock);
         teamData[1] = new TeamData(lock);
+        this.generalRepository = generalRepository;
     }
 
     @Override
     public int[] getTeamStrengths(int team) {
-        log("get strengths: team %d".formatted(team));
+        //log("get strengths: team %d".formatted(team));
         TeamData teamData = this.teamData[team];
         lock.lock();
         try {
@@ -59,7 +62,7 @@ public class MContestantsBench implements IContestantsBench {
 
     @Override
     public void setTeamIsMatchEnd(int team, boolean isMatchEnd) {
-        log("set is match end: team %d, is match end %b".formatted(team, isMatchEnd));
+        //log("set is match end: team %d, is match end %b".formatted(team, isMatchEnd));
         TeamData teamData = this.teamData[team];
         lock.lock();
         teamData.isMatchEnd = isMatchEnd;
@@ -68,13 +71,14 @@ public class MContestantsBench implements IContestantsBench {
 
     @Override
     public int seatDown(int team, int contestant, int strength) {
-        log("seat down: team %d, contestant %d, strength %d".formatted(team, contestant, strength));
+        //log("seat down: team %d, contestant %d, strength %d".formatted(team, contestant, strength));
         TeamData teamData = this.teamData[team];
         lock.lock();
         try {
             teamData.countSeatedDown++;
             teamData.selected[contestant] = false;
             teamData.strengths[contestant] = strength;
+            generalRepository.seatDown(team, contestant, false);
             if (teamData.countSeatedDown == contestantsPerTeam) {
                 teamData.seatedDown.signal();
             }
@@ -82,6 +86,7 @@ public class MContestantsBench implements IContestantsBench {
                 teamData.teamAssembled.await(); // releases the lock and waits
                 if (!teamData.selected[contestant] && teamData.strengths[contestant] < maxStrength) {
                    teamData.strengths[contestant]++; // stays seated, so strength increases
+                   generalRepository.seatDown(team, contestant, true);
                 }
             }
         } catch (InterruptedException e) {
@@ -94,7 +99,7 @@ public class MContestantsBench implements IContestantsBench {
 
     @Override
     public void callContestants(int team, boolean[] selected) {
-        log("call contestants: team %d, selected %s".formatted(team, Arrays.toString(selected)));
+        //log("call contestants: team %d, selected %s".formatted(team, Arrays.toString(selected)));
         TeamData teamData = this.teamData[team];
         lock.lock();
         try {
@@ -102,6 +107,7 @@ public class MContestantsBench implements IContestantsBench {
                 teamData.seatedDown.await(); // releases the lock and waits
             }
             teamData.selected = selected;
+            generalRepository.callContestants(team);
             teamData.teamAssembled.signalAll();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -111,11 +117,12 @@ public class MContestantsBench implements IContestantsBench {
     }
 
     @Override
-    public boolean followCoachAdvice(int team) {
-        log("follow coach advice: team %d".formatted(team));
+    public boolean followCoachAdvice(int team, int contestant) {
+        //log("follow coach advice: team %d".formatted(team));
         TeamData teamData = this.teamData[team];
         lock.lock();
         teamData.countSeatedDown--;
+        generalRepository.followCoachAdvice(team, contestant);
         lock.unlock();
         return !teamData.isMatchEnd;
     }

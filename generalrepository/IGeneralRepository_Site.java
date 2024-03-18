@@ -1,6 +1,9 @@
-package refereesite;
+package generalrepository;
 
-public interface IRefereeSite_Referee {
+public interface IGeneralRepository_Site {
+
+    void reviewNotes(int team);
+
     void announceNewGame();
 
     void callTrial();

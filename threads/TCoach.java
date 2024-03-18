@@ -48,23 +48,23 @@ public class TCoach extends Thread {
 
     @Override
     public void run() {
-        log("thread started");
+        //log("thread started");
         while (true) {
-            log("wait for referee command");
-            boolean keepRunning = refereeSite.reviewNotes();
+            //log("wait for referee command");
+            boolean keepRunning = refereeSite.reviewNotes(team);
             if (!keepRunning) {
                 // let contestants know the match is over
                 contestantsBench.setTeamIsMatchEnd(team, true);
                 contestantsBench.callContestants(team, selectAllContestants());
                 break;
             }
-            log("assemble team");
+            //log("assemble team");
             int[] strengths = contestantsBench.getTeamStrengths(team);
             contestantsBench.callContestants(team, selectContestants(strengths));
-            log("watch trial");
+            //log("watch trial");
             playground.informReferee(team);
         }
-        log("thread finished");
+        //log("thread finished");
     }
 
     private void log(String msg) {

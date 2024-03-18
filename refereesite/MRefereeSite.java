@@ -1,5 +1,8 @@
 package refereesite;
 
+import generalrepository.IGeneralRepository_Site;
+import generalrepository.MGeneralRepository;
+
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -13,8 +16,10 @@ public class MRefereeSite implements IRefereeSite {
     private boolean isMatchEnd;
     private int winTeamGame;
     private int winTeamMatch;
+    private IGeneralRepository_Site generalRepository;
 
-    public MRefereeSite() {
+    public MRefereeSite(IGeneralRepository_Site generalRepository) {
+        this.generalRepository = generalRepository;
         lock = new ReentrantLock();
         coachesWaited = lock.newCondition();
         waiting = 0;
@@ -26,8 +31,8 @@ public class MRefereeSite implements IRefereeSite {
     }
 
     @Override
-    public boolean reviewNotes() {
-        log("review notes");
+    public boolean reviewNotes(int team) {
+        //log("review notes");
         lock.lock();
         try {
             waiting++;
@@ -41,6 +46,7 @@ public class MRefereeSite implements IRefereeSite {
             if (waiting == 0) {
                 isRefereeCommand = false;
             }
+            generalRepository.reviewNotes(team);
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -51,12 +57,13 @@ public class MRefereeSite implements IRefereeSite {
 
     @Override
     public void announceNewGame() {
-        log("announce new game");
+        //log("announce new game");
+        generalRepository.announceNewGame();
     }
 
     @Override
     public void callTrial() {
-        log("call trial");
+        //log("call trial");
         lock.lock();
         try {
             while (waiting < 2) {
@@ -64,6 +71,7 @@ public class MRefereeSite implements IRefereeSite {
             }
             isMatchEnd = false;
             isRefereeCommand = true;
+            generalRepository.callTrial();
             refereeCommand.signalAll(); // alerts coaches
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -73,11 +81,12 @@ public class MRefereeSite implements IRefereeSite {
     }
 
     @Override
-    public void declareGameWinner(int team) {
-        log("declare game winner: team %d".formatted(team));
+    public void declareGameWinner(int team, boolean knockout) {
+        //log("declare game winner: team %d".formatted(team));
         lock.lock();
         try {
             winTeamGame = team;
+            generalRepository.declareGameWinner(team, knockout);
         } finally {
             lock.unlock();
         }
@@ -85,7 +94,7 @@ public class MRefereeSite implements IRefereeSite {
 
     @Override
     public void declareMatchWinner(int team) {
-        log("declare match winner: team %d".formatted(team));
+        //log("declare match winner: team %d".formatted(team));
         lock.lock();
         try {
             winTeamMatch = team;
@@ -95,6 +104,7 @@ public class MRefereeSite implements IRefereeSite {
             waiting = 0;
             isMatchEnd = true;
             isRefereeCommand = true;
+            generalRepository.declareMatchWinner(team);
             refereeCommand.signalAll(); // alerts coaches
         } catch (InterruptedException e) {
             e.printStackTrace();

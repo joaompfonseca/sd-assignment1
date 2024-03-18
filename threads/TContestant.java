@@ -20,21 +20,21 @@ public class TContestant extends Thread {
 
     @Override
     public void run() {
-        log("thread started");
+        //log("thread started");
         while (true) {
-            log("seat at the bench");
+            //log("seat at the bench");
             strength = contestantsBench.seatDown(team, contestant, strength);
-            boolean keepRunning = contestantsBench.followCoachAdvice(team);
+            boolean keepRunning = contestantsBench.followCoachAdvice(team, contestant);
             if (!keepRunning) {
                 break;
             }
-            log("stand in position");
-            playground.getReady(team);
-            log("do your best");
-            strength = playground.pullTheRope(team, strength);
+            //log("stand in position");
+            playground.getReady(team, contestant);
+            //log("do your best");
+            strength = playground.pullTheRope(team, strength, contestant);
             playground.amDone();
         }
-        log("thread finished");
+        //log("thread finished");
     }
 
     private void log(String msg) {
