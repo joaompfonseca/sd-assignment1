@@ -27,7 +27,7 @@ public interface IGeneralRepository_Playground {
      * @param team     the team
      * @param contestant  the contestant
      */
-    void pullTheRope(int team, int contestant);
+    void pullTheRope(int team, int contestant, boolean reduce);
 
     /**
      * Set the new state of the contestant when he's done.

@@ -266,15 +266,19 @@ public class MGeneralRepository implements IGeneralRepository {
      * @param contestant  the contestant
      */
     @Override
-    public void pullTheRope(int team, int contestant) {
+    public void pullTheRope(int team, int contestant, boolean reduce) {
         lock.lock();
 
         if(team == 0) {
             contestantsTeam1.get(contestant).status = DO_YOUR_BEST.label;
-            contestantsTeam1.get(contestant).strength--;
+            if (reduce) {
+                contestantsTeam1.get(contestant).strength--;
+            }
         } else {
             contestantsTeam2.get(contestant).status = DO_YOUR_BEST.label;
-            contestantsTeam2.get(contestant).strength--;
+            if (reduce) {
+                contestantsTeam2.get(contestant).strength--;
+            }
         }
 
         print();

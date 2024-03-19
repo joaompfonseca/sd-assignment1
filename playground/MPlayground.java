@@ -217,10 +217,12 @@ public class MPlayground implements IPlayground {
         //log("pull the rope: team %d, strength %d".formatted(team, strength));
         lock.lock();
         ropePosition += (team == 0) ? -strength : strength;
-        generalRepository.pullTheRope(team, contestant);
         // If strength is already the minimum (1), it will remain like that
         if (strength > 1) {
             strength--;
+            generalRepository.pullTheRope(team, contestant,true);
+        } else {
+            generalRepository.pullTheRope(team, contestant,false);
         }
         lock.unlock();
         return strength;
