@@ -26,6 +26,7 @@ public interface IGeneralRepository_Playground {
      *
      * @param team     the team
      * @param contestant  the contestant
+     * @param reduce if the strength of the contestant should be reduced
      */
     void pullTheRope(int team, int contestant, boolean reduce);
 

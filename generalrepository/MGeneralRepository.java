@@ -264,6 +264,7 @@ public class MGeneralRepository implements IGeneralRepository {
      *
      * @param team     the team
      * @param contestant  the contestant
+     * @param reduce if the strength of the contestant should be reduced
      */
     @Override
     public void pullTheRope(int team, int contestant, boolean reduce) {
