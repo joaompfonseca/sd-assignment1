@@ -5,7 +5,7 @@
 N_RUNS=$1 # Number of runs
 
 if [ -z "$N_RUNS" ] || [ $N_RUNS -lt 1 ]; then
-  echo "Usage: ./benchmark.sh <N_RUNS>"
+  echo "Usage: ./test.sh <N_RUNS>"
   exit 1
 fi
 
