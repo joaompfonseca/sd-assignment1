@@ -353,6 +353,8 @@ public class MGeneralRepository implements IGeneralRepository {
         nGames++;
 
         System.out.println("Game " + nGames);
+        System.out.printf("Ref Coa 1 Cont 1 Cont 2 Cont 3 Cont 4 Cont 5 Coa 2 Cont 1 Cont 2 Cont 3 Cont 4 Cont 5       Trial        %n");
+        System.out.printf("Sta  Stat Sta SG Sta SG Sta SG Sta SG Sta SG  Stat Sta SG Sta SG Sta SG Sta SG Sta SG 3 2 1 . 1 2 3 NB PS%n");
 
         print();
 
@@ -402,7 +404,7 @@ public class MGeneralRepository implements IGeneralRepository {
         if (team == -1) {
             output += " was a draw.";
         } else if (knockout) {
-            output += " was won by team" + team + "by knockout out in " + nTrials + " trials.";
+            output += " was won by team " + team + " by knockout out in " + nTrials + " trials.";
         } else {
             output += " ended by points.";
         }
@@ -509,9 +511,6 @@ public class MGeneralRepository implements IGeneralRepository {
         } else {
             s3Team2 = "#";
         }
-
-        System.out.printf("Ref Coa 1 Cont 1 Cont 2 Cont 3 Cont 4 Cont 5 Coa 2 Cont 1 Cont 2 Cont 3 Cont 4 Cont 5       Trial        %n");
-        System.out.printf("Sta  Stat Sta SG Sta SG Sta SG Sta SG Sta SG  Stat Sta SG Sta SG Sta SG Sta SG Sta SG 3 2 1 . 1 2 3 NB PS%n");
 
         System.out.printf("%3s  %4s %3s %2s %3s %2s %3s %2s %3s %2s %3s %2s  %4s %3s %2s %3s %2s %3s %2s %3s %2s %3s %2s %1s %1s %1s . %1s %1s %1s %2s %2s%n",
                 rStatus, cTeam1Status, c1Team1Status, c1Team1Strength, c2Team1Status, c2Team1Strength, c3Team1Status, c3Team1Strength, c4Team1Status, c4Team1Strength, c5Team1Status, c5Team1Strength,
