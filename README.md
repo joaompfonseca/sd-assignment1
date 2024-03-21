@@ -30,6 +30,10 @@ To allow synchronization between the threads, the following information sharing 
 - Run `./run.sh` in root to compile and run the program.
 - Run `./test.sh <N_RUNS>` in root to run the program multiple times to check for deadlocks.
 
+## Logging
+
+Logs of the runs are saved in the `logs` directory. The logs are named `<timestamp>.log`.
+
 ## Authors
 
 - Diogo Paiva, 103183
