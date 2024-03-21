@@ -1,5 +1,10 @@
 package generalrepository;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantLock;
@@ -88,13 +93,17 @@ public class MGeneralRepository implements IGeneralRepository {
      * The lock.
      */
     private final ReentrantLock lock;
+    /**
+     * The file writer.
+     */
+    private final PrintWriter fileWriter;
 
     /**
      * Instantiation of the general repository.
      *
      * @param nContestants the number of contestants
      */
-    public MGeneralRepository(int nContestants) {
+    public MGeneralRepository(int nContestants){
         this.refereeStatus = START_OF_THE_MATCH.label;
         this.coachesTeam1Status = null;
         this.coachesTeam2Status = null;
@@ -118,7 +127,28 @@ public class MGeneralRepository implements IGeneralRepository {
 
         this.lock = new ReentrantLock();
 
-        System.out.printf("                               Game of the Rope - Description of the internal state%n%n");
+        // Timestamp
+        Instant now = Instant.now();
+        String timestamp = now.toString();
+        timestamp = timestamp.split("\\.")[0];
+        String filename = "logs/log_" + timestamp + ".log";
+
+        // Check if folder logs exists if not create it
+        File file = new File("logs");
+        if (!file.exists()) {
+            boolean created = file.mkdir();
+            if (!created) {
+                throw new RuntimeException("Error creating logs folder");
+            }
+        }
+
+        try {
+            this.fileWriter = new PrintWriter(filename);
+        } catch (Exception e) {
+            throw new RuntimeException("Error creating file writer", e);
+        }
+
+        fileWriter.printf("                               Game of the Rope - Description of the internal state%n%n");
     }
 
     /**
@@ -352,9 +382,9 @@ public class MGeneralRepository implements IGeneralRepository {
         nTrials = 0;
         nGames++;
 
-        System.out.println("Game " + nGames);
-        System.out.printf("Ref Coa 1 Cont 1 Cont 2 Cont 3 Cont 4 Cont 5 Coa 2 Cont 1 Cont 2 Cont 3 Cont 4 Cont 5       Trial        %n");
-        System.out.printf("Sta  Stat Sta SG Sta SG Sta SG Sta SG Sta SG  Stat Sta SG Sta SG Sta SG Sta SG Sta SG 3 2 1 . 1 2 3 NB PS%n");
+        fileWriter.println("Game " + nGames);
+        fileWriter.printf("Ref Coa 1 Cont 1 Cont 2 Cont 3 Cont 4 Cont 5 Coa 2 Cont 1 Cont 2 Cont 3 Cont 4 Cont 5       Trial        %n");
+        fileWriter.printf("Sta  Stat Sta SG Sta SG Sta SG Sta SG Sta SG  Stat Sta SG Sta SG Sta SG Sta SG Sta SG 3 2 1 . 1 2 3 NB PS%n");
 
         print();
 
@@ -408,7 +438,7 @@ public class MGeneralRepository implements IGeneralRepository {
         } else {
             output += " ended by points.";
         }
-        System.out.println(output);
+        fileWriter.println(output);
 
         lock.unlock();
     }
@@ -430,9 +460,12 @@ public class MGeneralRepository implements IGeneralRepository {
         if (team == -1) {
             output = "The match ended in a draw.";
         } else {
-            output = "The match was won by team " + team + "(" + wonGames.get(0) + "-" + wonGames.get(1) + ") .";
+            output = "The match was won by team " + team + " (" + wonGames.get(0) + "-" + wonGames.get(1) + ").";
         }
-        System.out.println(output);
+        fileWriter.println(output);
+
+        // Close file writer
+        fileWriter.close();
 
         matchEnd = true;
 
@@ -512,15 +545,9 @@ public class MGeneralRepository implements IGeneralRepository {
             s3Team2 = "#";
         }
 
-        System.out.printf("%3s  %4s %3s %2s %3s %2s %3s %2s %3s %2s %3s %2s  %4s %3s %2s %3s %2s %3s %2s %3s %2s %3s %2s %1s %1s %1s . %1s %1s %1s %2s %2s%n",
+        fileWriter.printf("%3s  %4s %3s %2s %3s %2s %3s %2s %3s %2s %3s %2s  %4s %3s %2s %3s %2s %3s %2s %3s %2s %3s %2s %1s %1s %1s . %1s %1s %1s %2s %2s%n",
                 rStatus, cTeam1Status, c1Team1Status, c1Team1Strength, c2Team1Status, c2Team1Strength, c3Team1Status, c3Team1Strength, c4Team1Status, c4Team1Strength, c5Team1Status, c5Team1Strength,
                 cTeam2Status, c1Team2Status, c1Team2Strength, c2Team2Status, c2Team2Strength, c3Team2Status, c3Team2Strength, c4Team2Status, c4Team2Strength, c5Team2Status, c5Team2Strength,
                 s1Team1, s2Team1, s3Team1, s1Team2, s2Team2, s3Team2, nT, rP);
-
-        //System.out.printf("%3s  %4s %3s %2s %3s %2s %3s %2s %3s %2s %3s %2s  %4s %3s %2s %3s %2s %3s %2s %3s %2s %3s %2s %1s %1s %1s . %1s %1s %1s %2s %2s%n",
-        //        refereeStatus, coachesTeam1Status, contestantsTeam1.get(0).status, contestantsTeam1.get(0).strength, contestantsTeam1.get(1).status, contestantsTeam1.get(1).strength, contestantsTeam1.get(2).status, contestantsTeam1.get(2).strength, contestantsTeam1.get(3).status, contestantsTeam1.get(3).strength, contestantsTeam1.get(4).status, contestantsTeam1.get(4).strength,
-        //        coachesTeam2Status, contestantsTeam2.get(0).status, contestantsTeam2.get(0).strength, contestantsTeam2.get(1).status, contestantsTeam2.get(1).strength, contestantsTeam2.get(2).status, contestantsTeam2.get(2).strength, contestantsTeam2.get(3).status, contestantsTeam2.get(3).strength, contestantsTeam2.get(4).status, contestantsTeam2.get(4).strength,
-        //        3, 2, 1, 1, 2, 3, nTrials, ropePosition);
-
     }
 }
