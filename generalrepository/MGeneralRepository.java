@@ -7,8 +7,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static generalrepository.EGeneralRepository.*;
+import static generalrepository.EGeneralRepository_Referee.*;
+import static generalrepository.EGeneralRepository_Contestant.*;
+import static generalrepository.EGeneralRepository_Coach.*;
 
+/**
+ * Implementation of the general repository monitor.
+ *
+ * @author Diogo Paiva (103183)
+ * @author João Fonseca (103154)
+ * @version 1.0
+ */
 public class MGeneralRepository implements IGeneralRepository {
     /**
      * Representation of a contestant.
