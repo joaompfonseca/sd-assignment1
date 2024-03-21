@@ -483,27 +483,27 @@ public class MGeneralRepository implements IGeneralRepository {
         String cTeam1Status = coachesTeam1Status == null ? "####" : coachesTeam1Status;
         String cTeam2Status = coachesTeam2Status == null ? "####" : coachesTeam2Status;
 
-        String c1Team1Status = contestantsTeam1.get(0).status == null ? "###" : contestantsTeam1.get(0).status;
-        String c2Team1Status = contestantsTeam1.get(1).status == null ? "###" : contestantsTeam1.get(1).status;
-        String c3Team1Status = contestantsTeam1.get(2).status == null ? "###" : contestantsTeam1.get(2).status;
-        String c4Team1Status = contestantsTeam1.get(3).status == null ? "###" : contestantsTeam1.get(3).status;
-        String c5Team1Status = contestantsTeam1.get(4).status == null ? "###" : contestantsTeam1.get(4).status;
-        String c1Team2Status = contestantsTeam2.get(0).status == null ? "###" : contestantsTeam2.get(0).status;
-        String c2Team2Status = contestantsTeam2.get(1).status == null ? "###" : contestantsTeam2.get(1).status;
-        String c3Team2Status = contestantsTeam2.get(2).status == null ? "###" : contestantsTeam2.get(2).status;
-        String c4Team2Status = contestantsTeam2.get(3).status == null ? "###" : contestantsTeam2.get(3).status;
-        String c5Team2Status = contestantsTeam2.get(4).status == null ? "###" : contestantsTeam2.get(4).status;
+        String c1Team1Status = getContestantStatus(0, 0);
+        String c2Team1Status = getContestantStatus(0, 1);
+        String c3Team1Status = getContestantStatus(0, 2);
+        String c4Team1Status = getContestantStatus(0, 3);
+        String c5Team1Status = getContestantStatus(0, 4);
+        String c1Team2Status = getContestantStatus(1, 0);
+        String c2Team2Status = getContestantStatus(1, 1);
+        String c3Team2Status = getContestantStatus(1, 2);
+        String c4Team2Status = getContestantStatus(1, 3);
+        String c5Team2Status = getContestantStatus(1, 4);
 
-        String c1Team1Strength = contestantsTeam1.get(0).status == null ? "##" : Integer.toString(contestantsTeam1.get(0).strength);
-        String c2Team1Strength = contestantsTeam1.get(1).status == null ? "##" : Integer.toString(contestantsTeam1.get(1).strength);
-        String c3Team1Strength = contestantsTeam1.get(2).status == null ? "##" : Integer.toString(contestantsTeam1.get(2).strength);
-        String c4Team1Strength = contestantsTeam1.get(3).status == null ? "##" : Integer.toString(contestantsTeam1.get(3).strength);
-        String c5Team1Strength = contestantsTeam1.get(4).status == null ? "##" : Integer.toString(contestantsTeam1.get(4).strength);
-        String c1Team2Strength = contestantsTeam2.get(0).status == null ? "##" : Integer.toString(contestantsTeam2.get(0).strength);
-        String c2Team2Strength = contestantsTeam2.get(1).status == null ? "##" : Integer.toString(contestantsTeam2.get(1).strength);
-        String c3Team2Strength = contestantsTeam2.get(2).status == null ? "##" : Integer.toString(contestantsTeam2.get(2).strength);
-        String c4Team2Strength = contestantsTeam2.get(3).status == null ? "##" : Integer.toString(contestantsTeam2.get(3).strength);
-        String c5Team2Strength = contestantsTeam2.get(4).status == null ? "##" : Integer.toString(contestantsTeam2.get(4).strength);
+        String c1Team1Strength = getContestantStrength(0, 0);
+        String c2Team1Strength = getContestantStrength(0, 1);
+        String c3Team1Strength = getContestantStrength(0, 2);
+        String c4Team1Strength = getContestantStrength(0, 3);
+        String c5Team1Strength = getContestantStrength(0, 4);
+        String c1Team2Strength = getContestantStrength(1, 0);
+        String c2Team2Strength = getContestantStrength(1, 1);
+        String c3Team2Strength = getContestantStrength(1, 2);
+        String c4Team2Strength = getContestantStrength(1, 3);
+        String c5Team2Strength = getContestantStrength(1, 4);
 
         String nT = nTrials == 0 ? "##" : Integer.toString(this.nTrials);
         String rP = ropePosition == null ? "##" : Integer.toString(this.ropePosition);
@@ -550,5 +550,25 @@ public class MGeneralRepository implements IGeneralRepository {
                 rStatus, cTeam1Status, c1Team1Status, c1Team1Strength, c2Team1Status, c2Team1Strength, c3Team1Status, c3Team1Strength, c4Team1Status, c4Team1Strength, c5Team1Status, c5Team1Strength,
                 cTeam2Status, c1Team2Status, c1Team2Strength, c2Team2Status, c2Team2Strength, c3Team2Status, c3Team2Strength, c4Team2Status, c4Team2Strength, c5Team2Status, c5Team2Strength,
                 s1Team1, s2Team1, s3Team1, s1Team2, s2Team2, s3Team2, nT, rP);
+    }
+
+    public String getContestantStatus(int team, int id) {
+        String res;
+        if(team == 0) {
+            res = contestantsTeam1.get(id).status;
+        } else {
+            res = contestantsTeam2.get(id).status;
+        }
+        return res == null ? "###" : res;
+    }
+
+    public String getContestantStrength(int team, int id) {
+        String res;
+        if(team == 0) {
+            res = contestantsTeam1.get(id).status == null ? "##" : Integer.toString(contestantsTeam1.get(id).strength);
+        } else {
+            res = contestantsTeam2.get(id).status == null ? "##" : Integer.toString(contestantsTeam2.get(id).strength);
+        }
+        return res;
     }
 }
