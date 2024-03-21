@@ -72,7 +72,7 @@ public class MGeneralRepository implements IGeneralRepository {
     /**
      * The rope position.
      */
-    private int ropePosition;
+    private Integer ropePosition;
     /**
      * The next rope position.
      */
@@ -121,7 +121,7 @@ public class MGeneralRepository implements IGeneralRepository {
         for (int i = 0; i <= 1; i++) {
             this.wonGames.put(i, 0);
         }
-        this.ropePosition = 100;
+        this.ropePosition = null;
         this.nTrials = 0;
         this.nGames = 0;
 
@@ -278,7 +278,7 @@ public class MGeneralRepository implements IGeneralRepository {
 
         refereeStatus = WAIT_FOR_TRIAL_CONCLUSION.label;
 
-        if (ropePosition == 100) {
+        if (ropePosition == null) {
             ropePosition = 0;
         } else {
             ropePosition = nextRopePosition;
@@ -378,7 +378,7 @@ public class MGeneralRepository implements IGeneralRepository {
         lock.lock();
 
         refereeStatus = START_OF_A_GAME.label;
-        ropePosition = 100;
+        ropePosition = null;
         nTrials = 0;
         nGames++;
 
@@ -506,7 +506,7 @@ public class MGeneralRepository implements IGeneralRepository {
         String c5Team2Strength = contestantsTeam2.get(4).status == null ? "##" : Integer.toString(contestantsTeam2.get(4).strength);
 
         String nT = nTrials == 0 ? "##" : Integer.toString(this.nTrials);
-        String rP = ropePosition == 100 ? "##" : Integer.toString(this.ropePosition);
+        String rP = ropePosition == null ? "##" : Integer.toString(this.ropePosition);
 
         String s1Team1, s2Team1, s3Team1, s1Team2, s2Team2, s3Team2;
 
