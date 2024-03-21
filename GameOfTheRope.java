@@ -29,11 +29,12 @@ public class GameOfTheRope {
     private final static int N_CONTESTANTS_PER_TRIAL = 3;
     private final static int MAX_STRENGTH = 5;
     private final static int MAX_SLEEP_MS = 250;
+    private final static String LOGS_FOLDER = "logs";
 
     public static void main(String[] args) {
 
         // Information sharing regions
-        IGeneralRepository generalRepository = new MGeneralRepository(N_CONTESTANTS_PER_TEAM);
+        IGeneralRepository generalRepository = new MGeneralRepository(N_CONTESTANTS_PER_TEAM, LOGS_FOLDER);
         IPlayground playground = new MPlayground(N_CONTESTANTS_PER_TRIAL, generalRepository);
         IContestantsBench contestantsBench = new MContestantsBench(N_CONTESTANTS_PER_TEAM, MAX_STRENGTH, generalRepository);
         IRefereeSite refereeSite = new MRefereeSite(generalRepository);

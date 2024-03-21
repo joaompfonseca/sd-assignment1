@@ -1,5 +1,12 @@
 package generalrepository;
 
+/**
+ * Interface for the referee site in the general repository.
+ *
+ * @author Diogo Paiva (103183)
+ * @author João Fonseca (103154)
+ * @version 1.0
+ */
 public interface IGeneralRepository_Site {
     /**
      * Set the new state of the coach when he waits for the referee.
