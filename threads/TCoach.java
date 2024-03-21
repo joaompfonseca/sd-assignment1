@@ -130,9 +130,7 @@ public class TCoach extends Thread {
      */
     @Override
     public void run() {
-        //log("thread started");
         while (true) {
-            //log("wait for referee command");
             boolean keepRunning = refereeSite.reviewNotes(team);
             if (!keepRunning) {
                 // let contestants know the match is over
@@ -140,21 +138,9 @@ public class TCoach extends Thread {
                 contestantsBench.callContestants(team, selectAllContestants());
                 break;
             }
-            //log("assemble team");
             int[] strengths = contestantsBench.getTeamStrengths(team);
             contestantsBench.callContestants(team, selectContestants(strengths, mistakeProbability));
-            //log("watch trial");
             playground.informReferee(team);
         }
-        //log("thread finished");
-    }
-
-    /**
-     * Logs a message.
-     *
-     * @param msg the message to log
-     */
-    private void log(String msg) {
-        System.out.printf("[Coach#%d]: %s\n", team, msg);
     }
 }

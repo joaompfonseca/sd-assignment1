@@ -103,7 +103,6 @@ public class MContestantsBench implements IContestantsBench {
      */
     @Override
     public int[] getTeamStrengths(int team) {
-        //log("get strengths: team %d".formatted(team));
         TeamData teamData = this.teamData[team];
         lock.lock();
         try {
@@ -126,7 +125,6 @@ public class MContestantsBench implements IContestantsBench {
      */
     @Override
     public void setTeamIsMatchEnd(int team, boolean isMatchEnd) {
-        //log("set is match end: team %d, is match end %b".formatted(team, isMatchEnd));
         TeamData teamData = this.teamData[team];
         lock.lock();
         teamData.isMatchEnd = isMatchEnd;
@@ -145,7 +143,6 @@ public class MContestantsBench implements IContestantsBench {
      */
     @Override
     public int seatDown(int team, int contestant, int strength) {
-        //log("seat down: team %d, contestant %d, strength %d".formatted(team, contestant, strength));
         TeamData teamData = this.teamData[team];
         lock.lock();
         try {
@@ -180,7 +177,6 @@ public class MContestantsBench implements IContestantsBench {
      */
     @Override
     public void callContestants(int team, boolean[] selected) {
-        //log("call contestants: team %d, selected %s".formatted(team, Arrays.toString(selected)));
         TeamData teamData = this.teamData[team];
         lock.lock();
         try {
@@ -206,21 +202,11 @@ public class MContestantsBench implements IContestantsBench {
      */
     @Override
     public boolean followCoachAdvice(int team, int contestant) {
-        //log("follow coach advice: team %d".formatted(team));
         TeamData teamData = this.teamData[team];
         lock.lock();
         teamData.countSeatedDown--;
         generalRepository.followCoachAdvice(team, contestant);
         lock.unlock();
         return !teamData.isMatchEnd;
-    }
-
-    /**
-     * Logs a message.
-     *
-     * @param msg the message to log
-     */
-    private void log(String msg) {
-        System.out.printf("[ContestantsBench]: %s\n", msg);
     }
 }

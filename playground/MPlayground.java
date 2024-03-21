@@ -132,7 +132,6 @@ public class MPlayground implements IPlayground {
      */
     @Override
     public void getReady(int team, int contestant) {
-        //log("get ready: team %d".formatted(team));
         TeamData teamData = this.teamData[team];
         lock.lock();
         try {
@@ -159,7 +158,6 @@ public class MPlayground implements IPlayground {
      */
     @Override
     public void informReferee(int team) {
-        //log("inform referee: team %d".formatted(team));
         TeamData teamData = this.teamData[team];
         lock.lock();
         try {
@@ -186,7 +184,6 @@ public class MPlayground implements IPlayground {
      */
     @Override
     public void startTrial() {
-        //log("start trial");
         lock.lock();
         try {
             while (countInformed < 2) {
@@ -214,7 +211,6 @@ public class MPlayground implements IPlayground {
      */
     @Override
     public int pullTheRope(int team, int strength, int contestant) {
-        //log("pull the rope: team %d, strength %d".formatted(team, strength));
         lock.lock();
         ropePosition += (team == 0) ? -strength : strength;
         // If strength is already the minimum (1), it will remain like that
@@ -234,7 +230,6 @@ public class MPlayground implements IPlayground {
      */
     @Override
     public void amDone() {
-        //log("am done");
         lock.lock();
         try {
             contestantsDone++;
@@ -259,7 +254,6 @@ public class MPlayground implements IPlayground {
      */
     @Override
     public int assertTrialDecision() {
-        //log("assert trial decision");
         lock.lock();
         try {
             while (contestantsDone < 2 * contestantsPerTrial) {
@@ -279,14 +273,5 @@ public class MPlayground implements IPlayground {
             lock.unlock();
         }
         return ropePosition;
-    }
-
-    /**
-     * Logs a message.
-     *
-     * @param msg the message to log
-     */
-    private void log(String msg) {
-        System.out.printf("[Playground]: %s\n", msg);
     }
 }

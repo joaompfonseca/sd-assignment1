@@ -75,7 +75,6 @@ public class MRefereeSite implements IRefereeSite {
      */
     @Override
     public boolean reviewNotes(int team) {
-        //log("review notes");
         lock.lock();
         try {
             waiting++;
@@ -103,7 +102,6 @@ public class MRefereeSite implements IRefereeSite {
      */
     @Override
     public void announceNewGame() {
-        //log("announce new game");
         generalRepository.announceNewGame();
     }
 
@@ -113,7 +111,6 @@ public class MRefereeSite implements IRefereeSite {
      */
     @Override
     public void callTrial() {
-        //log("call trial");
         lock.lock();
         try {
             while (waiting < 2) {
@@ -138,7 +135,6 @@ public class MRefereeSite implements IRefereeSite {
      */
     @Override
     public void declareGameWinner(int team, boolean knockout) {
-        //log("declare game winner: team %d".formatted(team));
         lock.lock();
         try {
             winTeamGame = team;
@@ -156,7 +152,6 @@ public class MRefereeSite implements IRefereeSite {
      */
     @Override
     public void declareMatchWinner(int team) {
-        //log("declare match winner: team %d".formatted(team));
         lock.lock();
         try {
             winTeamMatch = team;
@@ -173,14 +168,5 @@ public class MRefereeSite implements IRefereeSite {
         } finally {
             lock.unlock();
         }
-    }
-
-    /**
-     * Logs a message.
-     *
-     * @param msg the message to log
-     */
-    private void log(String msg) {
-        System.out.printf("[RefereeSite]: %s\n", msg);
     }
 }

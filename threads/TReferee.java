@@ -51,19 +51,14 @@ public class TReferee extends Thread {
      */
     @Override
     public void run() {
-        //log("thread started");
-        //log("start of the match");
         int[] gameWins = new int[2];
         for (int game = 0; game < gamesPerMatch; game++) {
             boolean knockout = false;
-            //log("start of a game");
             refereeSite.announceNewGame();
             int ropePosition = 0;
             playground.setRopePosition(ropePosition);
             for (int trial = 0; trial < trialsPerGame; trial++) {
-                //log("teams ready");
                 refereeSite.callTrial();
-                //log("wait for trial conclusion");
                 playground.startTrial();
                 ropePosition = playground.assertTrialDecision();
                 if (Math.abs(ropePosition) >= 4) {
@@ -71,7 +66,6 @@ public class TReferee extends Thread {
                     break; // Team won by knockout
                 }
             }
-            //log("end of a game");
             int winTeamGame;
             if (ropePosition < 0) {
                 winTeamGame = 0; // Team 0 won the game
@@ -92,17 +86,6 @@ public class TReferee extends Thread {
         } else {
             winTeamMatch = -1; // Draw
         }
-        //log("end of the match");
         refereeSite.declareMatchWinner(winTeamMatch);
-        //log("thread finished");
-    }
-
-    /**
-     * Logs a message.
-     *
-     * @param msg the message to log
-     */
-    private void log(String msg) {
-        System.out.printf("[Referee]: %s\n", msg);
     }
 }

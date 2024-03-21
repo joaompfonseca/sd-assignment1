@@ -63,17 +63,13 @@ public class TContestant extends Thread {
      */
     @Override
     public void run() {
-        //log("thread started");
         while (true) {
-            //log("seat at the bench");
             strength = contestantsBench.seatDown(team, contestant, strength);
             boolean keepRunning = contestantsBench.followCoachAdvice(team, contestant);
             if (!keepRunning) {
                 break;
             }
-            //log("stand in position");
             playground.getReady(team, contestant);
-            //log("do your best");
             try {
                 Thread.sleep((long) (Math.random() * maxSleepMs));
             } catch (InterruptedException e) {
@@ -83,15 +79,5 @@ public class TContestant extends Thread {
             strength = playground.pullTheRope(team, strength, contestant);
             playground.amDone();
         }
-        //log("thread finished");
-    }
-
-    /**
-     * Logs a message.
-     *
-     * @param msg the message to log
-     */
-    private void log(String msg) {
-        System.out.printf("[Team#%d-Cont#%d]: %s\n", team, contestant, msg);
     }
 }
