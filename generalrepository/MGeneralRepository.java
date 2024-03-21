@@ -385,6 +385,7 @@ public class MGeneralRepository implements IGeneralRepository {
         fileWriter.println("Game " + nGames);
         fileWriter.printf("Ref Coa 1 Cont 1 Cont 2 Cont 3 Cont 4 Cont 5 Coa 2 Cont 1 Cont 2 Cont 3 Cont 4 Cont 5       Trial        %n");
         fileWriter.printf("Sta  Stat Sta SG Sta SG Sta SG Sta SG Sta SG  Stat Sta SG Sta SG Sta SG Sta SG Sta SG 3 2 1 . 1 2 3 NB PS%n");
+        fileWriter.printf("001  #### ### ## ### ## ### ## ### ## ### ##  #### ### ## ### ## ### ## ### ## ### ## # # # . # # # ## ##%n");
 
         print();
 
